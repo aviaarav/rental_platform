@@ -1,0 +1,41 @@
+<div class="col-md-6">
+    <label class="form-label">Professional / Service Name</label>
+    <input type="text" name="name" class="form-control" value="{{ form.get('name', '') }}" maxlength="120" required>
+</div>
+<div class="col-md-6">
+    <label class="form-label">Service Category</label>
+    <select name="category" class="form-select" required>
+        <option value="">Select category</option>
+        {% for c in service_categories %}
+        <option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Experience (years)</label>
+    <input type="number" name="experience" class="form-control" min="0" max="60" step="1" value="{{ form.get('experience', '') }}" required>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Service Charge (Rs.)</label>
+    <input type="number" name="price" class="form-control" min="1" step="1" value="{{ form.get('price', '') }}" required>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Charge Type</label>
+    <select name="charge_type" class="form-select" required>
+        {% for t in charge_types %}
+        <option value="{{ t }}" {{ 'selected' if form.get('charge_type', 'Per Hour') == t }}>{{ t }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-6">
+    <label class="form-label">Availability</label>
+    <select name="availability" class="form-select" required>
+        {% for a in availability_options %}
+        <option value="{{ a }}" {{ 'selected' if form.get('availability', 'Available') == a }}>{{ a }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="col-12">
+    <label class="form-label">Description and Skills</label>
+    <textarea name="description" class="form-control" rows="3" maxlength="1000" required>{{ form.get('description', '') }}</textarea>
+</div>

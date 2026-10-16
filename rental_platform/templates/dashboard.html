@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="welcome-banner mb-4">
+        <h3 class="fw-bold mb-1">Welcome, {{ current_user.full_name }}!</h3>
+        <div class="hero-text small">Manage your listings and booking requests from one place</div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card p-3 h-100">
+                <div class="text-center mb-3">
+                    <div class="profile-avatar mx-auto mb-2">{{ current_user.full_name[:1]|upper }}</div>
+                    <div class="fw-bold text-deep">{{ current_user.full_name }}</div>
+                </div>
+                <div class="small profile-lines">
+                    <div><span class="text-muted">Email</span><strong>{{ current_user.email }}</strong></div>
+                    <div><span class="text-muted">Phone</span><strong>{{ current_user.phone }}</strong></div>
+                    <div><span class="text-muted">District</span><strong>{{ current_user.district }}</strong></div>
+                    <div><span class="text-muted">Taluk</span><strong>{{ current_user.taluk }}</strong></div>
+                    <div><span class="text-muted">Address</span><strong>{{ current_user.address }}</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="row g-3 mb-4">
+                <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.resources }}</div><div class="small text-muted">Resources Listed</div></div></div>
+                <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.received }}</div><div class="small text-muted">Requests Received</div></div></div>
+                <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.sent }}</div><div class="small text-muted">Requests Sent</div></div></div>
+            </div>
+
+            <h6 class="fw-bold text-deep mb-3">Quick Actions</h6>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <a href="{{ url_for('resource.browse') }}" class="action-card"><span class="action-icon"><i class="bi bi-search"></i></span>
+                        <span><strong>Browse Resources</strong><small>Find equipment and services near you</small></span></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{{ url_for('resource.add_equipment') }}" class="action-card"><span class="action-icon"><i class="bi bi-tools"></i></span>
+                        <span><strong>Add Equipment</strong><small>List an item for rent</small></span></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{{ url_for('resource.add_service') }}" class="action-card"><span class="action-icon"><i class="bi bi-person-workspace"></i></span>
+                        <span><strong>Add Service</strong><small>Offer your professional skills</small></span></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{{ url_for('resource.my_items') }}" class="action-card"><span class="action-icon"><i class="bi bi-box-seam"></i></span>
+                        <span><strong>My Items</strong><small>Manage your listings</small></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

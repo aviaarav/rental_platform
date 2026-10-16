@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Choose Role{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <p class="text-center small text-muted mb-2">Home &nbsp;&gt;&nbsp; Get Started &nbsp;&gt;&nbsp; Choose Role &nbsp;&gt;&nbsp; Login</p>
+    <h2 class="text-center fw-bold text-deep">How would you like to continue?</h2>
+    <p class="text-center text-muted mb-5">Select your role to open the correct login page</p>
+
+    <div class="row justify-content-center g-4">
+        <div class="col-md-5 col-lg-4">
+            <div class="card h-100 text-center p-4 shadow-sm">
+                <div class="role-circle bg-navy mx-auto mb-3">A</div>
+                <h4 class="fw-bold text-deep">Administrator</h4>
+                <p class="text-muted small">Manage the whole platform</p>
+                <ul class="list-unstyled text-start small mx-auto role-list">
+                    <li><i class="bi bi-check2 text-primary"></i> View and block / unblock users</li>
+                    <li><i class="bi bi-check2 text-primary"></i> Monitor listings and bookings</li>
+                    <li><i class="bi bi-check2 text-primary"></i> Check activity logs</li>
+                </ul>
+                <a href="/auth/admin-login" class="btn btn-navy w-100 mt-auto">Admin Login</a>
+                <div class="small text-muted mt-3">Authorized administrators only</div>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-4">
+            <div class="card h-100 text-center p-4 shadow-sm border-primary border-2">
+                <div class="role-circle bg-primary mx-auto mb-3">U</div>
+                <h4 class="fw-bold text-deep">User</h4>
+                <p class="text-muted small">Rent items or offer your services</p>
+                <ul class="list-unstyled text-start small mx-auto role-list">
+                    <li><i class="bi bi-check2 text-primary"></i> Browse and book resources</li>
+                    <li><i class="bi bi-check2 text-primary"></i> List equipment and services</li>
+                    <li><i class="bi bi-check2 text-primary"></i> Track requests and reviews</li>
+                </ul>
+                <a href="/auth/login" class="btn btn-primary w-100 mt-auto">User Login</a>
+                <div class="small mt-3">New user? <a href="/auth/register" class="fw-semibold">Register here</a></div>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center mt-4"><a href="{{ url_for('main.home') }}" class="text-decoration-none">&lt; Back to Home</a></p>
+</div>
+{% endblock %}

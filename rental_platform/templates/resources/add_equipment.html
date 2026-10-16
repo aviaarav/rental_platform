@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Add Equipment{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-deep mb-0">Add Equipment Listing</h3>
+        <div class="btn-group btn-group-sm">
+            <a class="btn btn-primary" href="{{ url_for('resource.add_equipment') }}">Equipment</a>
+            <a class="btn btn-outline-primary" href="{{ url_for('resource.add_service') }}">Professional</a>
+        </div>
+    </div>
+    <div class="card p-4 shadow-sm">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            <div class="row g-3">
+                {% include 'resources/_equipment_fields.html' %}
+                {% include 'resources/_location_fields.html' %}
+                {% include 'resources/_image_field.html' %}
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary px-4">Save Listing</button>
+                <a class="btn btn-outline-primary" href="{{ url_for('resource.my_items') }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/taluk.js') }}"></script>
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+{% endblock %}

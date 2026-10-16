@@ -1,0 +1,393 @@
+/* ===== Blue and white theme ===== */
+:root {
+    --bs-primary: #0d6efd;
+    --bs-primary-rgb: 13, 110, 253;
+    --bs-link-color: #0d6efd;
+    --bs-link-hover-color: #0a4cb8;
+    --rs-deep: #0a4cb8;
+    --rs-navy: #0b2a5b;
+    --rs-light: #eef4ff;
+    --rs-border: #cddffc;
+    --rs-text: #1b2a49;
+    --rs-muted: #6c7a96;
+}
+
+body {
+    background: #f5f9ff;
+    color: var(--rs-text);
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+.text-deep {
+    color: var(--rs-deep) !important;
+}
+
+.bg-navy {
+    background: var(--rs-navy) !important;
+}
+
+.text-muted {
+    color: var(--rs-muted) !important;
+}
+
+/* navbar and footer */
+.navbar-rs {
+    background: #0d6efd;
+}
+
+.navbar-rs .nav-link {
+    opacity: .9;
+}
+
+.navbar-rs .nav-link:hover,
+.navbar-rs .nav-link.active {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.footer-rs {
+    background: var(--rs-light);
+    color: var(--rs-muted);
+    border-top: 1px solid var(--rs-border);
+}
+
+/* cards and buttons */
+.card {
+    border: 1px solid var(--rs-border);
+    border-radius: 12px;
+}
+
+.btn-primary {
+    --bs-btn-bg: #0d6efd;
+    --bs-btn-border-color: #0d6efd;
+    --bs-btn-hover-bg: #0a4cb8;
+    --bs-btn-hover-border-color: #0a4cb8;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #0d6efd;
+    --bs-btn-border-color: #0d6efd;
+    --bs-btn-hover-bg: #0d6efd;
+    --bs-btn-hover-border-color: #0d6efd;
+}
+
+.btn-navy {
+    background: var(--rs-navy);
+    border-color: var(--rs-navy);
+    color: #fff;
+}
+
+.btn-navy:hover {
+    background: #07204a;
+    border-color: #07204a;
+    color: #fff;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .15);
+}
+
+.form-control,
+.form-select {
+    border-color: var(--rs-border);
+}
+
+.table thead th {
+    background: var(--rs-light);
+    color: var(--rs-deep);
+    border-bottom: 1px solid var(--rs-border);
+}
+
+/* home page */
+.hero-section {
+    background: linear-gradient(135deg, #0a4cb8 0%, #0d6efd 100%);
+    color: #fff;
+    padding: 70px 0;
+}
+
+.hero-text {
+    color: #d6e6ff;
+}
+
+.hero-card {
+    border-radius: 14px;
+    max-width: 320px;
+    margin-left: auto;
+}
+
+.img-placeholder {
+    height: 150px;
+    background: var(--rs-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #9ec1fb;
+    border-radius: 14px 14px 0 0;
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--rs-light);
+    color: #0d6efd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+/* choose role page */
+.role-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.role-list {
+    max-width: 240px;
+}
+
+.role-list li {
+    margin-bottom: 6px;
+}
+
+/* status badges (used from Stage 3 onwards) */
+.badge-status {
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .35em .7em;
+    border-radius: 50rem;
+    color: #fff;
+}
+
+.status-pending {
+    background: #e69b00;
+}
+
+.status-approved,
+.status-available {
+    background: #198754;
+}
+
+.status-borrowed {
+    background: #0d6efd;
+}
+
+.status-returned {
+    background: #5b7db1;
+}
+
+.status-rejected,
+.status-blocked,
+.status-booked {
+    background: #dc3545;
+}
+
+.status-cancelled,
+.status-unavailable,
+.status-hidden {
+    background: #6c757d;
+}
+
+/* ===== Admin layout (navy sidebar + white top bar) ===== */
+.admin-wrapper {
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 240px;
+    background: var(--rs-navy);
+    flex-shrink: 0;
+}
+
+.admin-sidebar .nav-link {
+    color: #c9d8f5;
+    border-radius: 8px;
+}
+
+.admin-sidebar .nav-link:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+
+.admin-sidebar .nav-link.active {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.admin-main {
+    background: #f5f9ff;
+    min-width: 0;
+}
+
+.admin-topbar {
+    background: #fff;
+    border-bottom: 1px solid var(--rs-border);
+}
+
+@media (max-width: 767px) {
+    .admin-wrapper {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+    }
+}
+
+/* ===== Listings, dashboard (Stage 3) ===== */
+.thumb {
+    width: 52px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--rs-border);
+    background: var(--rs-light);
+}
+
+.detail-img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+.welcome-banner {
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--rs-light);
+    color: #0d6efd;
+    font-size: 1.6rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-lines>div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--rs-border);
+}
+
+.profile-lines strong {
+    text-align: right;
+    word-break: break-word;
+}
+
+.stat-card {
+    border-left: 4px solid #0d6efd;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0d6efd;
+    line-height: 1.1;
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--rs-light);
+    border: 1px solid var(--rs-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--rs-text);
+    height: 100%;
+}
+
+.action-card:hover {
+    border-color: #0d6efd;
+    background: #e3eeff;
+}
+
+.action-card small {
+    display: block;
+    color: var(--rs-muted);
+}
+
+.action-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* ===== Browse, route map (Stage 4) ===== */
+.resource-card .card-img-top {
+    height: 160px;
+    object-fit: cover;
+}
+
+.resource-card:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 4px 14px rgba(13, 110, 253, .12);
+}
+
+.route-map {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rs-border);
+    border-radius: 10px;
+    display: block;
+}
+
+.map-placeholder {
+    height: 150px;
+    border: 1px dashed var(--rs-border);
+    border-radius: 10px;
+    background: var(--rs-light);
+    color: var(--rs-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    padding: 12px;
+    font-size: .85rem;
+}
+
+.map-placeholder i {
+    font-size: 1.8rem;
+    color: #0d6efd;
+}
+
+.status-already-booked {
+    background: #dc3545;
+}
+
+.pagination {
+    --bs-pagination-color: #0d6efd;
+    --bs-pagination-active-bg: #0d6efd;
+    --bs-pagination-active-border-color: #0d6efd;
+}

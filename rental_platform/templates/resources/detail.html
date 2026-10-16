@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}{{ resource.name }}{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+{% from 'partials/_route_map.html' import route_map %}
+{% set avg = resource.average_rating %}
+<div class="container py-4">
+    <p class="small text-muted mb-3">
+        <a href="{{ url_for('resource.browse') }}" class="text-decoration-none">Browse</a> &nbsp;/&nbsp; {{ resource.name }}
+    </p>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card">
+                {% if resource.image_path %}
+                    <img src="{{ url_for('static', filename=resource.image_path) }}" class="detail-img" alt="{{ resource.name }}">
+                {% else %}
+                    <div class="img-placeholder detail-img"><i class="bi bi-image"></i></div>
+                {% endif %}
+                <div class="card-body">
+                    <h4 class="fw-bold text-deep mb-2">{{ resource.name }}</h4>
+                    <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+                        <span class="badge {{ 'text-bg-primary' if resource.is_equipment else 'bg-navy' }}">{{ resource.resource_type }}</span>
+                        {{ status_badge(resource.availability) }}
+                        {% if avg %}
+                            <span class="small"><i class="bi bi-star-fill text-warning"></i> {{ avg }} ({{ resource.review_count }} reviews)</span>
+                        {% else %}
+                            <span class="small text-muted">No reviews yet</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted">{{ resource.description }}</p>
+
+                    <div class="row g-3 small">
+                        <div class="col-6"><div class="text-muted">Category</div><div class="fw-semibold">{{ resource.category }}</div></div>
+                        {% if resource.is_equipment %}
+                            <div class="col-6"><div class="text-muted">Condition</div><div class="fw-semibold">{{ resource.condition }}</div></div>
+                            <div class="col-6"><div class="text-muted">Pickup Method</div><div class="fw-semibold">{{ resource.pickup_method }}</div></div>
+                            <div class="col-6"><div class="text-muted">Security Deposit</div><div class="fw-semibold">Rs. {{ '{:,.0f}'.format(resource.security_deposit or 0) }}</div></div>
+                        {% else %}
+                            <div class="col-6"><div class="text-muted">Experience</div><div class="fw-semibold">{{ resource.experience }} years</div></div>
+                            <div class="col-6"><div class="text-muted">Charge Type</div><div class="fw-semibold">{{ resource.charge_type }}</div></div>
+                        {% endif %}
+                        <div class="col-6"><div class="text-muted">{{ 'Rental Amount' if resource.is_equipment else 'Service Charge' }}</div><div class="fw-semibold text-primary">{{ resource.price_label }}</div></div>
+                        <div class="col-6"><div class="text-muted">Location</div><div class="fw-semibold">{{ resource.taluk }}, {{ resource.district }}</div></div>
+                        <div class="col-6">
+                            <div class="text-muted">Coordinates</div>
+                            <div class="fw-semibold">{% if resource.has_coordinates %}{{ resource.latitude }}, {{ resource.longitude }}{% else %}Not provided{% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            {# ---------- owner ---------- #}
+            <div class="card p-3 mb-3">
+                <h6 class="fw-bold text-deep">Owner</h6>
+                <div class="fw-semibold">{{ resource.owner.full_name }}</div>
+                <div class="small text-muted">{{ resource.owner.taluk }}, {{ resource.owner.district }}</div>
+                <div class="small text-muted">{{ resource.owner.phone }}</div>
+            </div>
+
+            {# ---------- route map and distance ---------- #}
+            {% if not is_owner %}
+            <div class="card p-3 mb-3">
+                <h6 class="fw-bold text-deep">Route: Your Location to Resource</h6>
+                {% if not resource.has_coordinates %}
+                    <p class="small text-muted mb-0">The owner has not shared the location of this item, so distance cannot be shown.</p>
+                {% else %}
+                    {% if points %}
+                        {{ route_map(points, distance ~ ' km', 'You', 'Resource') }}
+                        <div class="row g-2 small mt-2">
+                            <div class="col-6"><span class="text-muted">You</span><br><strong>{{ '%.4f'|format(user_lat) }}, {{ '%.4f'|format(user_lng) }}</strong></div>
+                            <div class="col-6"><span class="text-muted">Resource</span><br><strong>{{ '%.4f'|format(resource.latitude) }}, {{ '%.4f'|format(resource.longitude) }}</strong></div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div><span class="text-muted small">Distance</span> <span class="fs-5 fw-bold text-primary">{{ distance }} km</span></div>
+                            <a class="small" target="_blank" rel="noopener"
+                               href="https://www.google.com/maps/dir/?api=1&origin={{ user_lat }},{{ user_lng }}&destination={{ resource.latitude }},{{ resource.longitude }}">Open directions</a>
+                        </div>
+                        <div class="small text-muted">Straight-line distance (Haversine formula).</div>
+                    {% else %}
+                        <div class="map-placeholder"><i class="bi bi-geo-alt"></i><span>Allow your location to see the route and distance</span></div>
+                    {% endif %}
+                    <button type="button" class="btn btn-outline-primary w-100 mt-3" data-locate-redirect>
+                        <i class="bi bi-geo-alt me-1"></i>{{ 'Update My Location' if points else 'Use My Current Location' }}
+                    </button>
+                    <div class="small text-muted mt-2" data-location-status>Your browser will ask for permission. Your location is not saved.</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {# ---------- date availability ---------- #}
+            <div class="card p-3 mb-3">
+                <h6 class="fw-bold text-deep">Check Availability</h6>
+                <form method="get" class="row g-2">
+                    {% if user_lat is not none %}
+                    <input type="hidden" name="lat" value="{{ user_lat }}">
+                    <input type="hidden" name="lng" value="{{ user_lng }}">
+                    {% endif %}
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-0">Start Date</label>
+                        <input type="date" name="start" class="form-control form-control-sm" value="{{ start.isoformat() if start else '' }}" data-start-date>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-muted mb-0">End Date</label>
+                        <input type="date" name="end" class="form-control form-control-sm" value="{{ end.isoformat() if end else '' }}" data-end-date>
+                    </div>
+                    <div class="col-12"><button class="btn btn-outline-primary btn-sm w-100">Check Dates</button></div>
+                </form>
+                {% if availability %}
+                    {% if availability.free %}
+                        <div class="alert alert-success py-2 small mt-3 mb-0">Available for {{ availability.start.strftime('%d %b') }} - {{ availability.end.strftime('%d %b %Y') }}.</div>
+                    {% else %}
+                        <div class="alert alert-danger py-2 small mt-3 mb-0">Already Booked or unavailable for {{ availability.start.strftime('%d %b') }} - {{ availability.end.strftime('%d %b %Y') }}.</div>
+                    {% endif %}
+                {% endif %}
+                {% if booked_periods %}
+                    <div class="small text-muted mt-3">Booked dates:</div>
+                    <ul class="small mb-0">
+                        {% for s, e in booked_periods %}
+                        <li>{{ s.strftime('%d %b %Y') }} - {{ e.strftime('%d %b %Y') }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- actions ---------- #}
+            {% if is_owner %}
+            <div class="card p-3">
+                <h6 class="fw-bold text-deep">This is your listing</h6>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('resource.edit', resource_id=resource.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{{ url_for('resource.my_items') }}" class="btn btn-outline-primary btn-sm">Back to My Items</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="card p-3">
+                <h6 class="fw-bold text-deep">Booking</h6>
+                <p class="small text-muted mb-2">The booking request form is added in the next stage.</p>
+                <button class="btn btn-primary w-100" disabled>Send Request</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+<script src="{{ url_for('static', filename='js/browse.js') }}"></script>
+{% endblock %}

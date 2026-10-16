@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}User Login{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm p-4">
+                <h3 class="fw-bold text-deep text-center mb-1">Welcome Back</h3>
+                <p class="text-muted text-center small mb-4">Login to rent, offer and manage bookings</p>
+                <form method="post" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button class="btn btn-primary w-100">Login</button>
+                </form>
+                <p class="text-center small mt-3 mb-0">New here? <a href="{{ url_for('auth.register') }}" class="fw-semibold">Create an account</a></p>
+            </div>
+            <p class="text-center small text-muted mt-3">Blocked accounts see an error message and cannot log in.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

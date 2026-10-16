@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm p-4">
+                <h3 class="fw-bold text-deep text-center mb-1">Create Your Account</h3>
+                <p class="text-muted text-center small mb-4">One account lets you list items / services and book from others</p>
+                <form method="post" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ form.get('full_name', '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" value="{{ form.get('email', '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control" maxlength="12" value="{{ form.get('phone', '') }}" required>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" minlength="6" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control" minlength="6" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tamil Nadu District</label>
+                            <select name="district" class="form-select" data-district-select required>
+                                <option value="">Select district</option>
+                                {% for d in districts %}
+                                <option value="{{ d }}" {{ 'selected' if form.get('district') == d }}>{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Taluk <span class="text-muted small">(depends on District)</span></label>
+                            <select name="taluk" class="form-select" data-taluk-select data-selected="{{ form.get('taluk', '') }}" required>
+                                <option value="">Select taluk</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-control" value="{{ form.get('address', '') }}" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-4">Register</button>
+                </form>
+                <p class="text-center small mt-3 mb-0">Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-semibold">Login</a></p>
+            </div>
+            <p class="text-center small text-muted mt-3">Passwords are stored hashed. Email must be unique.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/taluk.js') }}"></script>
+{% endblock %}

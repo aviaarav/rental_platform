@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Edit Listing{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 900px;">
+    <h3 class="fw-bold text-deep mb-3">
+        Edit {{ 'Equipment' if resource.is_equipment else 'Professional Service' }}
+    </h3>
+    <div class="card p-4 shadow-sm">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            <div class="row g-3">
+                {% if resource.is_equipment %}
+                    {% include 'resources/_equipment_fields.html' %}
+                {% else %}
+                    {% include 'resources/_service_fields.html' %}
+                {% endif %}
+                {% include 'resources/_location_fields.html' %}
+                {% include 'resources/_image_field.html' %}
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary px-4">Save Changes</button>
+                <a class="btn btn-outline-primary" href="{{ url_for('resource.my_items') }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/taluk.js') }}"></script>
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+{% endblock %}

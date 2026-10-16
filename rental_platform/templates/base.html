@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Welcome{% endblock %} | RentServe Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+{% if current_user.is_authenticated %}
+    {% include 'partials/_navbar_user.html' %}
+{% else %}
+    <nav class="navbar navbar-expand-lg navbar-rs">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white" href="{{ url_for('main.home') }}">
+                <i class="bi bi-box-seam me-1"></i> RentServe Hub
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="publicNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('main.home') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('main.choose_role') }}">Get Started</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endif %}
+
+<main class="flex-grow-1">
+    {% include 'partials/_flash.html' %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer-rs text-center py-3 small">
+    Rental Resource and Professional Service Booking Platform
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

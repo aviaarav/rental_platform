@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3">Rent Equipment.<br>Book Professionals.</h1>
+                <p class="lead hero-text mb-4">
+                    One account to rent tools, offer your skills and find resources and services near you.
+                </p>
+                <a href="{{ url_for('main.choose_role') }}" class="btn btn-light btn-lg rounded-pill px-4 fw-semibold text-primary">
+                    Get Started <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+                <span class="hero-text ms-3 small">Free for every user</span>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="card shadow border-0 hero-card">
+                    <div class="img-placeholder"><i class="bi bi-image"></i></div>
+                    <div class="card-body">
+                        <h6 class="fw-bold text-deep mb-1">Honda Power Generator</h6>
+                        <div class="fw-bold text-primary">Rs. 800 / day</div>
+                        <div class="mt-2">
+                            <span class="badge rounded-pill text-bg-success">Available</span>
+                            <span class="small text-muted ms-2"><i class="bi bi-geo-alt"></i> 1.6 km away</span>
+                        </div>
+                        <div class="mt-2 text-warning small">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                            <span class="text-muted ms-1">4.6</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 p-3">
+                <div class="feature-icon mb-3"><i class="bi bi-tools"></i></div>
+                <h5 class="text-deep fw-bold">Rent Equipment</h5>
+                <p class="text-muted mb-0">List your tools and rent them to people nearby.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 p-3">
+                <div class="feature-icon mb-3"><i class="bi bi-person-workspace"></i></div>
+                <h5 class="text-deep fw-bold">Hire Professionals</h5>
+                <p class="text-muted mb-0">Electricians, plumbers, drivers and many more services.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 p-3">
+                <div class="feature-icon mb-3"><i class="bi bi-geo-alt"></i></div>
+                <h5 class="text-deep fw-bold">Find Nearby</h5>
+                <p class="text-muted mb-0">Distance from your current location is calculated for you.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

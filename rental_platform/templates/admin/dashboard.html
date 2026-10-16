@@ -1,0 +1,17 @@
+{% extends 'base_admin.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold text-deep">Dashboard Overview</h4>
+<p class="text-muted">Summary of users, listings and bookings</p>
+
+<div class="row g-3">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.total_users }}</div><div class="text-muted small">Total Users</div></div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.blocked_users }}</div><div class="text-muted small">Blocked Users</div></div>
+    </div>
+</div>
+<p class="text-muted small mt-4">Resource and booking statistics are added in later stages.</p>
+{% endblock %}

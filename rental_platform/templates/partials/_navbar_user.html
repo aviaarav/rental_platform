@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-xl navbar-rs">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-white" href="{{ url_for('dashboard.index') }}">
+            <i class="bi bi-box-seam me-1"></i> RentServe Hub
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#userNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="userNav">
+            <ul class="navbar-nav ms-auto align-items-xl-center">
+                <li class="nav-item"><a class="nav-link text-white {{ 'active' if request.endpoint == 'dashboard.index' }}" href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                                <!-- Received, Sent and Profile are connected in later stages -->
+                <li class="nav-item"><a class="nav-link text-white {{ 'active' if request.endpoint == 'resource.browse' }}" href="{{ url_for('resource.browse') }}">Browse</a></li>
+                <li class="nav-item"><a class="nav-link text-white {{ 'active' if request.endpoint == 'resource.my_items' }}" href="{{ url_for('resource.my_items') }}">My Items</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link text-white dropdown-toggle {{ 'active' if request.endpoint in ['resource.add_equipment', 'resource.add_service'] }}" href="#" data-bs-toggle="dropdown">Add Listing</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('resource.add_equipment') }}"><i class="bi bi-tools me-2"></i>Add Equipment</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('resource.add_service') }}"><i class="bi bi-person-workspace me-2"></i>Add Professional Service</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Received</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Sent</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Profile</a></li>
+                <li class="nav-item ms-xl-2">
+                    <a class="btn btn-light btn-sm rounded-pill px-3 text-primary fw-semibold" href="{{ url_for('auth.logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

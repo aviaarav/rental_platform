@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}My Items{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-bold text-deep mb-0">My Items</h3>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('resource.add_equipment') }}" class="btn btn-primary btn-sm">+ Add Equipment</a>
+            <a href="{{ url_for('resource.add_service') }}" class="btn btn-outline-primary btn-sm">+ Add Service</a>
+        </div>
+    </div>
+
+    {% if items %}
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Image</th><th>Name</th><th>Type</th><th>Category</th>
+                        <th>Price / Charge</th><th>Availability</th><th>Rating</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for r in items %}
+                    {% set avg = r.average_rating %}
+                    <tr>
+                        <td>
+                            {% if r.image_path %}
+                                <img src="{{ url_for('static', filename=r.image_path) }}" class="thumb" alt="">
+                            {% else %}
+                                <div class="thumb d-flex align-items-center justify-content-center text-primary"><i class="bi bi-image"></i></div>
+                            {% endif %}
+                        </td>
+                        <td class="fw-semibold">{{ r.name }}</td>
+                        <td><span class="badge {{ 'text-bg-primary' if r.is_equipment else 'bg-navy' }}">{{ r.resource_type }}</span></td>
+                        <td>{{ r.category }}</td>
+                        <td>{{ r.price_label }}</td>
+                        <td>{{ status_badge(r.availability) }}</td>
+                        <td>{% if avg %}<i class="bi bi-star-fill text-warning"></i> {{ avg }} ({{ r.review_count }}){% else %}<span class="text-muted">No reviews</span>{% endif %}</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                <a href="{{ url_for('resource.detail', resource_id=r.id) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                <a href="{{ url_for('resource.edit', resource_id=r.id) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                <form method="post" action="{{ url_for('resource.delete', resource_id=r.id) }}" onsubmit="return confirm('Delete this listing?');">
+                                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                                <a href="#" class="btn btn-primary btn-sm">Requests</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="small text-muted mt-3">You can only view, edit or delete your own listings. A listing with booking history cannot be deleted; set it to Unavailable instead.</p>
+    {% else %}
+    <div class="card p-5 text-center">
+        <div class="display-5 text-primary mb-2"><i class="bi bi-box-seam"></i></div>
+        <h5 class="text-deep fw-bold">You have not listed anything yet</h5>
+        <p class="text-muted">Add equipment to rent out or offer your professional service.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <a href="{{ url_for('resource.add_equipment') }}" class="btn btn-primary">Add Equipment</a>
+            <a href="{{ url_for('resource.add_service') }}" class="btn btn-outline-primary">Add Service</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

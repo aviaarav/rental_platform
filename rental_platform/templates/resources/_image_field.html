@@ -1,0 +1,11 @@
+<div class="col-12">
+    <label class="form-label">Image <span class="text-muted small">(PNG, JPG or WEBP, max 5 MB, optional)</span></label>
+    <div class="d-flex align-items-center gap-3">
+        <input type="file" name="image" class="form-control" accept=".png,.jpg,.jpeg,.webp" data-image-input>
+        {% if resource is defined and resource and resource.image_path %}
+            <img src="{{ url_for('static', filename=resource.image_path) }}" class="thumb" alt="Current image" data-image-preview>
+        {% else %}
+            <img class="thumb d-none" alt="Preview" data-image-preview>
+        {% endif %}
+    </div>
+</div>
