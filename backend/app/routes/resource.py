@@ -4,16 +4,22 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 
-from app.data.categories import (AVAILABILITY_OPTIONS, CHARGE_TYPES, CONDITIONS,
-                             EQUIPMENT_CATEGORIES, PICKUP_METHODS, SERVICE_CATEGORIES)
+from app.constants import TYPE_EQUIPMENT, TYPE_PROFESSIONAL
+from app.data.categories import (
+    AVAILABILITY_OPTIONS,
+    CHARGE_TYPES,
+    CONDITIONS,
+    EQUIPMENT_CATEGORIES,
+    PICKUP_METHODS,
+    SERVICE_CATEGORIES,
+)
 from app.data.tn_locations import DISTRICTS, is_valid_location
 from app.extensions import db
-from app.constants import TYPE_EQUIPMENT, TYPE_PROFESSIONAL
-from app.models import Resource
+from app.models import Resource, Review
 from app.services.booking import booked_resource_ids, has_conflict, upcoming_booked_periods, validate_dates
-from app.utils.geo import haversine_km, is_valid_pair, parse_coordinate, route_points
 from app.services.notify import log_activity
 from app.services.uploads import delete_image, folder_for, save_image
+from app.utils.geo import haversine_km, is_valid_pair, parse_coordinate, route_points
 
 resource_bp = Blueprint('resource', __name__, url_prefix='/resources')
 
@@ -285,10 +291,18 @@ def detail(resource_id):
         free = resource.availability == 'Available' and not has_conflict(resource.id, start, end)
         availability = {'start': start, 'end': end, 'free': free}
 
+    request_args = {}                    # carried to the booking request form
+    if user_lat is not None:
+        request_args.update(lat=user_lat, lng=user_lng)
+    if start and end:
+        request_args.update(start=start.isoformat(), end=end.isoformat())
+    reviews = resource.reviews.order_by(Review.created_at.desc()).limit(5).all()
+
     return render_template('resources/detail.html', resource=resource, is_owner=is_owner,
                            user_lat=user_lat, user_lng=user_lng, distance=distance, points=points,
                            availability=availability, start=start, end=end,
-                           booked_periods=upcoming_booked_periods(resource.id))
+                           booked_periods=upcoming_booked_periods(resource.id),
+                           request_args=request_args, reviews=reviews)
 
 
 @resource_bp.route('/<int:resource_id>/edit', methods=['GET', 'POST'])

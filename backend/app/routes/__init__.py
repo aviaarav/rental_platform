@@ -1,15 +1,15 @@
 def register_blueprints(app):
-    """Every stage adds its blueprints here."""
-    from app.routes.main import main_bp
+    from app.routes.admin import admin_bp
     from app.routes.auth import auth_bp
     from app.routes.dashboard import dashboard_bp
+    from app.routes.main import main_bp
+    from app.routes.notifications import notifications_bp
+    from app.routes.profile import profile_bp
+    from app.routes.request import request_bp
     from app.routes.resource import resource_bp
+    from app.routes.review import review_bp
     from app.routes.uploads import uploads_bp
-    from app.routes.admin import admin_bp
 
-    app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(dashboard_bp)
-    app.register_blueprint(resource_bp)
-    app.register_blueprint(uploads_bp)
-    app.register_blueprint(admin_bp)
+    for blueprint in (main_bp, auth_bp, dashboard_bp, profile_bp, resource_bp, request_bp,
+                      review_bp, notifications_bp, uploads_bp, admin_bp):
+        app.register_blueprint(blueprint)

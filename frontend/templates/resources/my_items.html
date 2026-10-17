@@ -46,7 +46,7 @@
                                 <form method="post" action="{{ url_for('resource.delete', resource_id=r.id) }}" onsubmit="return confirm('Delete this listing?');">
                                     <button class="btn btn-outline-danger btn-sm">Delete</button>
                                 </form>
-                                <a href="#" class="btn btn-primary btn-sm">Requests</a>
+                                <a href="{{ url_for('request.received', resource_id=r.id) }}" class="btn btn-primary btn-sm">Requests</a>
                             </div>
                         </td>
                     </tr>

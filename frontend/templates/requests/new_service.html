@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Request {{ resource.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <p class="small text-muted mb-3">
+        <a href="{{ url_for('resource.browse') }}" class="text-decoration-none">Browse</a> &nbsp;/&nbsp;
+        <a href="{{ url_for('resource.detail', resource_id=resource.id) }}" class="text-decoration-none">{{ resource.name }}</a> &nbsp;/&nbsp; Service Request
+    </p>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            {% include 'requests/_resource_summary.html' %}
+        </div>
+        <div class="col-lg-8">
+            <div class="card p-4 shadow-sm">
+                <h4 class="fw-bold text-deep mb-1">Professional Service Request</h4>
+                <p class="small text-muted">The professional will approve or reject your request. Dates are reserved only after approval.</p>
+                <form method="post" novalidate>
+                    <div class="row g-3">
+                        {% include 'requests/_common_fields.html' %}
+                        <div class="col-md-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="service_time" class="form-control" value="{{ form.get('service_time', '') }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Hours per Day</label>
+                            <input type="number" name="duration_hours" class="form-control" min="1" max="24" value="{{ form.get('duration_hours', '') }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Urgency</label>
+                            <select name="urgency" class="form-select" required>
+                                <option value="">Select</option>
+                                {% for u in urgency_options %}
+                                <option value="{{ u }}" {{ 'selected' if form.get('urgency') == u }}>{{ u }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Service Mode</label>
+                            <select name="pickup_method" class="form-select" required>
+                                <option value="">Select</option>
+                                {% for m in service_modes %}
+                                <option value="{{ m }}" {{ 'selected' if form.get('pickup_method') == m }}>{{ m }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button class="btn btn-primary px-4">Send Request</button>
+                        <a class="btn btn-outline-primary" href="{{ url_for('resource.detail', resource_id=resource.id) }}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/taluk.js') }}"></script>
+<script src="{{ url_for('static', filename='js/location.js') }}"></script>
+<script src="{{ url_for('static', filename='js/browse.js') }}"></script>
+{% endblock %}

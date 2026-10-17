@@ -1,7 +1,7 @@
 # Backend / Frontend folder split (keep Jinja)
 
 Date: 2026-10-17
-Status: phases 1 to 3 applied (branches refactor/phase-1-hygiene, refactor/phase-2-split, refactor/phase-3-services)
+Status: all four phases applied (branches refactor/phase-1-hygiene .. refactor/phase-4-features, each stacked on the previous)
 
 ## Goal
 
@@ -159,8 +159,17 @@ pytest                              # tests use TestingConfig + in-memory sqlite
 
 ### Phase 4: fill and test
 - Implement the four stub blueprints: `profile`, `request`, `review`, `notifications`.
-- Add `tests/` with a `conftest.py` app fixture and smoke tests for login,
-  browsing a resource and creating a booking.
+  The matching templates were empty files, so the pages were built from scratch
+  following the existing Bootstrap layout; the navbar, dashboard, My Items and
+  detail page placeholders now link to them. `partials/_flash.html` (also empty)
+  renders flashed messages. `static/js/notifications.js` polls the unread feed.
+- Add `tests/` with a `conftest.py` app fixture (in-memory sqlite, two users, a
+  listing) and tests for auth, booking requests and status transitions, reviews,
+  notifications and profile. `pytest.ini` sets `pythonpath = .`; `pyproject.toml`
+  configures ruff.
+- Not done: the admin pages (`admin/users.html`, `bookings.html`, `resources.html`,
+  `logs.html`, `user_detail.html`) are still empty files and the admin sidebar
+  links still point to `#`. That is a separate stage.
 
 ## Deliberately not done
 - No JSON API, no React/Vue. Jinja stays. A future SPA can still live in `frontend/`

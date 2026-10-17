@@ -35,7 +35,6 @@ def create_app(config=None):
     # Importing the package registers every table with SQLAlchemy (needed by
     # Flask-Migrate) and the Flask-Login user loader.
     from app import models  # noqa: F401
-
     from app.routes import register_blueprints
     register_blueprints(app)
 

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-bold text-deep mb-3">My Profile</h3>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card p-3 mb-3">
+                <div class="text-center mb-3">
+                    <div class="profile-avatar mx-auto mb-2">{{ current_user.full_name[:1]|upper }}</div>
+                    <div class="fw-bold text-deep">{{ current_user.full_name }}</div>
+                    <div class="small text-muted">{{ current_user.email }}</div>
+                    <div class="small text-muted">Member since {{ current_user.created_at.strftime('%b %Y') }}</div>
+                </div>
+                <div class="row g-2 text-center small">
+                    <div class="col-6"><div class="card stat-card p-2"><div class="stat-number">{{ stats.resources }}</div><div class="text-muted">Listings</div></div></div>
+                    <div class="col-6"><div class="card stat-card p-2"><div class="stat-number">{{ stats.reviews }}</div><div class="text-muted">Reviews Written</div></div></div>
+                    <div class="col-6"><div class="card stat-card p-2"><div class="stat-number">{{ stats.received }}</div><div class="text-muted">Received</div></div></div>
+                    <div class="col-6"><div class="card stat-card p-2"><div class="stat-number">{{ stats.sent }}</div><div class="text-muted">Sent</div></div></div>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <h6 class="fw-bold text-deep">Change Password</h6>
+                <form method="post" action="{{ url_for('profile.change_password') }}" novalidate>
+                    <div class="mb-2"><input type="password" name="current_password" class="form-control form-control-sm" placeholder="Current password" required></div>
+                    <div class="mb-2"><input type="password" name="new_password" class="form-control form-control-sm" placeholder="New password (6+ characters)" required></div>
+                    <div class="mb-2"><input type="password" name="confirm_password" class="form-control form-control-sm" placeholder="Confirm new password" required></div>
+                    <button class="btn btn-outline-primary btn-sm w-100">Update Password</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card p-4 shadow-sm">
+                <h6 class="fw-bold text-deep mb-3">Edit Details</h6>
+                <form method="post" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ form.get('full_name', '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone <span class="text-muted small">(10 digits)</span></label>
+                            <input type="text" name="phone" class="form-control" value="{{ form.get('phone', '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" value="{{ current_user.email }}" disabled>
+                            <div class="form-text">Email cannot be changed.</div>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <label class="form-label">District</label>
+                            <select name="district" class="form-select" data-district-select required>
+                                <option value="">Select district</option>
+                                {% for d in districts %}
+                                <option value="{{ d }}" {{ 'selected' if form.get('district') == d }}>{{ d }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Taluk <span class="text-muted small">(depends on District)</span></label>
+                            <select name="taluk" class="form-select" data-taluk-select data-selected="{{ form.get('taluk', '') }}" required>
+                                <option value="">Select taluk</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-control" value="{{ form.get('address', '') }}" maxlength="255" required>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button class="btn btn-primary px-4">Save Changes</button>
+                        <a class="btn btn-outline-primary" href="{{ url_for('dashboard.index') }}">Back to Dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/taluk.js') }}"></script>
+{% endblock %}

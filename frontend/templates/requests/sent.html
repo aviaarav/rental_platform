@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Requests Sent{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-bold text-deep mb-0">Requests Sent</h3>
+        <a href="{{ url_for('resource.browse') }}" class="btn btn-primary btn-sm">Browse Resources</a>
+    </div>
+
+    {% if bookings %}
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr><th>Resource</th><th>Owner</th><th>Dates</th><th>Details</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                {% for b in bookings %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('resource.detail', resource_id=b.resource.id) }}" class="fw-semibold text-decoration-none">{{ b.resource.name }}</a>
+                            <div class="small text-muted">{{ b.resource.resource_type }} &middot; {{ b.resource.price_label }}</div>
+                        </td>
+                        <td class="small">
+                            {{ b.owner.full_name }}
+                            <div class="text-muted">{% if b.status_key in ('approved', 'borrowed', 'returned') %}{{ b.owner.phone }}{% else %}Phone shown after approval{% endif %}</div>
+                        </td>
+                        {% include 'requests/_booking_cells.html' %}
+                        <td>{{ status_badge(b.status) }}<div class="small text-muted">{{ b.updated_at.strftime('%d %b') }}</div></td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% if b.status_key in ('pending', 'approved') %}
+                                <form method="post" action="{{ url_for('request.update', booking_id=b.id, action='cancel') }}" onsubmit="return confirm('Cancel this request?');">
+                                    <button class="btn btn-outline-danger btn-sm">Cancel</button>
+                                </form>
+                                {% elif b.status_key == 'returned' %}
+                                    {% if b.review %}
+                                    <span class="small text-muted"><i class="bi bi-star-fill text-warning"></i> Reviewed {{ b.review.rating }}/5</span>
+                                    {% else %}
+                                    <a href="{{ url_for('review.add', booking_id=b.id) }}" class="btn btn-primary btn-sm">Write Review</a>
+                                    {% endif %}
+                                {% else %}
+                                <span class="small text-muted">No actions</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="small text-muted mt-3">Pending and approved requests can be cancelled. A review can be written once the owner marks the booking as returned or completed.</p>
+    {% else %}
+    <div class="card p-5 text-center">
+        <div class="display-5 text-primary mb-2"><i class="bi bi-send"></i></div>
+        <h5 class="text-deep fw-bold">You have not sent any requests yet</h5>
+        <p class="text-muted">Browse equipment and services near you and send a booking request.</p>
+        <div><a href="{{ url_for('resource.browse') }}" class="btn btn-primary">Browse Resources</a></div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

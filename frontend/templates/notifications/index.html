@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 820px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-bold text-deep mb-0">Notifications</h3>
+        {% if unread_count %}
+        <form method="post" action="{{ url_for('notifications.mark_all_read') }}">
+            <button class="btn btn-outline-primary btn-sm">Mark all as read ({{ unread_count }})</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if items %}
+    <div class="card">
+        <div class="list-group list-group-flush">
+        {% for n in items %}
+            <form method="post" action="{{ url_for('notifications.mark_read', notification_id=n.id) }}" class="list-group-item list-group-item-action p-0">
+                <button class="btn w-100 text-start p-3 border-0 rounded-0 {{ 'bg-light' if not n.is_read }}">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <div class="{{ 'fw-bold' if not n.is_read else 'fw-semibold' }} text-deep">
+                                {% if not n.is_read %}<i class="bi bi-circle-fill text-primary me-1" style="font-size: .5rem; vertical-align: middle;"></i>{% endif %}{{ n.title }}
+                            </div>
+                            <div class="small text-muted">{{ n.message }}</div>
+                        </div>
+                        <small class="text-muted text-nowrap">{{ n.created_at.strftime('%d %b, %H:%M') }}</small>
+                    </div>
+                </button>
+            </form>
+        {% endfor %}
+        </div>
+    </div>
+    <p class="small text-muted mt-3">Click a notification to mark it as read and open the related page.</p>
+    {% else %}
+    <div class="card p-5 text-center">
+        <div class="display-5 text-primary mb-2"><i class="bi bi-bell"></i></div>
+        <h5 class="text-deep fw-bold">No notifications yet</h5>
+        <p class="text-muted mb-0">Booking updates and reviews will show up here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

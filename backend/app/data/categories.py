@@ -15,3 +15,6 @@ CONDITIONS = ['New', 'Good', 'Average']
 PICKUP_METHODS = ["Owner's Home", 'Mutual Location', 'Delivery']
 CHARGE_TYPES = ['Per Hour', 'Per Day']
 AVAILABILITY_OPTIONS = ['Available', 'Unavailable']
+# Booking request options
+URGENCY_OPTIONS = ['Normal', 'Urgent', 'Emergency']
+SERVICE_MODES = ['At My Location', "At Provider's Place", 'Online / Remote']

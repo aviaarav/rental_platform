@@ -1,0 +1,11 @@
+{# Dates and details columns shared by the sent / received tables. Expects: b #}
+<td class="small">
+    {{ b.start_date.strftime('%d %b %Y') }} - {{ b.end_date.strftime('%d %b %Y') }}
+    <div class="text-muted">
+        {{ b.service_time }}{% if b.return_time %} to {{ b.return_time }}{% endif %}{% if b.duration_hours %}, {{ b.duration_hours }} h/day{% endif %}
+    </div>
+</td>
+<td class="small">
+    {{ b.purpose }}{% if b.purpose_details %}<div class="text-muted">{{ b.purpose_details }}</div>{% endif %}
+    <div class="text-muted">{{ b.pickup_method }}{% if b.urgency %} &middot; {{ b.urgency }}{% endif %}</div>
+</td>

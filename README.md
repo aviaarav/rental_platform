@@ -17,8 +17,9 @@ backend/            all Python: Flask package, migrations, entry points
     utils/          pure helpers (decorators, geo)
     data/           static reference data (categories, Tamil Nadu locations)
   migrations/       Flask-Migrate / Alembic schema history
+  tests/            pytest suite (in-memory sqlite)
   instance/         runtime data, gitignored (sqlite db, user uploads)
-  requirements.txt
+  requirements.txt  requirements-dev.txt
   run.py            dev entry point
   wsgi.py           production entry point (gunicorn wsgi:app)
 frontend/           everything the browser receives
@@ -42,6 +43,28 @@ flask --app app run --debug # or: python run.py
 ```
 
 Open http://127.0.0.1:5000.
+
+## Features
+
+- Users register, log in, and manage a profile (details and password).
+- Owners list equipment for rent or professional services, with optional coordinates.
+- Borrowers browse by keyword, category, district, date range and distance, then send a
+  booking request. Date conflicts with pending, approved or borrowed bookings are refused.
+- Owners approve or reject requests, then mark them borrowed / started and returned / completed.
+  Borrowers can cancel while pending or approved.
+- After a booking is returned, the borrower can leave one review; ratings show on the listing.
+- Every booking change creates an in-app notification. The navbar badge and popup toasts
+  poll `/notifications/unread.json` every 30 seconds.
+- Admins have a separate login and dashboard.
+
+## Tests and lint
+
+```bash
+pip install -r backend/requirements-dev.txt
+cd backend
+pytest            # runs tests/ against an in-memory database
+ruff check .      # lint; `ruff check --fix .` sorts imports
+```
 
 ## Database changes
 

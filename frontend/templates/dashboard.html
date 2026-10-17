@@ -50,6 +50,14 @@
                     <a href="{{ url_for('resource.my_items') }}" class="action-card"><span class="action-icon"><i class="bi bi-box-seam"></i></span>
                         <span><strong>My Items</strong><small>Manage your listings</small></span></a>
                 </div>
+                <div class="col-sm-6">
+                    <a href="{{ url_for('request.received') }}" class="action-card"><span class="action-icon"><i class="bi bi-inbox"></i></span>
+                        <span><strong>Requests Received</strong><small>Approve or reject booking requests</small></span></a>
+                </div>
+                <div class="col-sm-6">
+                    <a href="{{ url_for('request.sent') }}" class="action-card"><span class="action-icon"><i class="bi bi-send"></i></span>
+                        <span><strong>Requests Sent</strong><small>Track bookings and write reviews</small></span></a>
+                </div>
             </div>
         </div>
     </div>

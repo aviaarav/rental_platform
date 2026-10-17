@@ -1,0 +1,52 @@
+{# Fields shared by equipment and service booking forms. Expects: form, resource, districts #}
+<div class="col-md-6">
+    <label class="form-label">Start Date</label>
+    <input type="date" name="start_date" class="form-control" value="{{ form.get('start_date', '') }}" data-start-date required>
+</div>
+<div class="col-md-6">
+    <label class="form-label">End Date</label>
+    <input type="date" name="end_date" class="form-control" value="{{ form.get('end_date', '') }}" data-end-date required>
+</div>
+<div class="col-md-6">
+    <label class="form-label">Purpose</label>
+    <input type="text" name="purpose" class="form-control" value="{{ form.get('purpose', '') }}" maxlength="120" placeholder="e.g. Home renovation" required>
+</div>
+<div class="col-md-6">
+    <label class="form-label">Purpose Details <span class="text-muted small">(optional)</span></label>
+    <input type="text" name="purpose_details" class="form-control" value="{{ form.get('purpose_details', '') }}" maxlength="255">
+</div>
+<div class="col-md-6">
+    <label class="form-label">District</label>
+    <select name="request_district" class="form-select" data-district-select required>
+        <option value="">Select district</option>
+        {% for d in districts %}
+        <option value="{{ d }}" {{ 'selected' if form.get('request_district') == d }}>{{ d }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-6">
+    <label class="form-label">Taluk <span class="text-muted small">(depends on District)</span></label>
+    <select name="request_taluk" class="form-select" data-taluk-select data-selected="{{ form.get('request_taluk', '') }}" required>
+        <option value="">Select taluk</option>
+    </select>
+</div>
+<div class="col-12">
+    <label class="form-label">{{ 'Meeting / Delivery Address' if resource.is_equipment else 'Service Address' }}</label>
+    <input type="text" name="address" class="form-control" value="{{ form.get('address', '') }}" maxlength="255" required>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Your Latitude <span class="text-muted small">(optional)</span></label>
+    <input type="text" name="borrower_latitude" class="form-control" value="{{ form.get('borrower_latitude', '') }}" placeholder="e.g. 11.0168" data-lat-input>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Your Longitude <span class="text-muted small">(optional)</span></label>
+    <input type="text" name="borrower_longitude" class="form-control" value="{{ form.get('borrower_longitude', '') }}" placeholder="e.g. 76.9558" data-lng-input>
+</div>
+<div class="col-md-4 d-flex align-items-end">
+    <button type="button" class="btn btn-outline-primary w-100" data-use-location>
+        <i class="bi bi-geo-alt me-1"></i> Use My Current Location
+    </button>
+</div>
+<div class="col-12">
+    <div class="small text-muted" data-location-status>Sharing your location lets the owner see the distance to you. You can leave it empty.</div>
+</div>

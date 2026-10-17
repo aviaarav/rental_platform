@@ -1,0 +1,18 @@
+{# Small card describing the listing being requested. Expects: resource #}
+<div class="card mb-3">
+    {% if resource.image_path %}
+        <img src="{{ url_for('uploads.serve', filename=resource.image_path) }}" class="detail-img" alt="{{ resource.name }}">
+    {% else %}
+        <div class="img-placeholder detail-img"><i class="bi bi-image"></i></div>
+    {% endif %}
+    <div class="card-body">
+        <div class="fw-bold text-deep">{{ resource.name }}</div>
+        <div class="mb-2"><span class="badge {{ 'text-bg-primary' if resource.is_equipment else 'bg-navy' }}">{{ resource.resource_type }}</span></div>
+        <div class="small"><span class="text-muted">{{ 'Rental Amount' if resource.is_equipment else 'Service Charge' }}</span><br><strong class="text-primary">{{ resource.price_label }}</strong></div>
+        {% if resource.is_equipment and resource.security_deposit %}
+        <div class="small mt-1"><span class="text-muted">Security Deposit</span><br><strong>Rs. {{ '{:,.0f}'.format(resource.security_deposit) }}</strong></div>
+        {% endif %}
+        <div class="small mt-1"><span class="text-muted">Owner</span><br>{{ resource.owner.full_name }}</div>
+        <div class="small mt-1"><span class="text-muted">Location</span><br>{{ resource.taluk }}, {{ resource.district }}</div>
+    </div>
+</div>

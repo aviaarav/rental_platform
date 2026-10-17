@@ -49,6 +49,28 @@
                     </div>
                 </div>
             </div>
+
+            {# ---------- reviews ---------- #}
+            <div class="card p-3 mt-4">
+                <h6 class="fw-bold text-deep mb-3">
+                    Reviews
+                    {% if avg %}<span class="small fw-normal text-muted">({{ avg }} average from {{ resource.review_count }})</span>{% endif %}
+                </h6>
+                {% for rv in reviews %}
+                <div class="{{ 'border-bottom pb-2 mb-2' if not loop.last }}">
+                    <div class="d-flex justify-content-between small">
+                        <strong>{{ rv.reviewer.full_name }}</strong>
+                        <span class="text-muted">{{ rv.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                    <div class="text-warning small">
+                        {% for _ in range(rv.rating) %}<i class="bi bi-star-fill"></i>{% endfor %}{% for _ in range(5 - rv.rating) %}<i class="bi bi-star"></i>{% endfor %}
+                    </div>
+                    {% if rv.comment %}<div class="small">{{ rv.comment }}</div>{% endif %}
+                </div>
+                {% else %}
+                <p class="small text-muted mb-0">No reviews yet. Borrowers can review after a completed booking.</p>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="col-lg-5">
@@ -137,8 +159,16 @@
             {% else %}
             <div class="card p-3">
                 <h6 class="fw-bold text-deep">Booking</h6>
-                <p class="small text-muted mb-2">The booking request form is added in the next stage.</p>
-                <button class="btn btn-primary w-100" disabled>Send Request</button>
+                {% if resource.availability != 'Available' %}
+                    <p class="small text-muted mb-2">The owner has marked this listing as unavailable.</p>
+                    <button class="btn btn-primary w-100" disabled>Send Request</button>
+                {% elif availability and not availability.free %}
+                    <p class="small text-muted mb-2">Those dates are taken. Check other dates above, or send a request with different dates.</p>
+                    <a href="{{ url_for('request.new', resource_id=resource.id, **request_args) }}" class="btn btn-outline-primary w-100">Request Other Dates</a>
+                {% else %}
+                    <p class="small text-muted mb-2">Send a booking request with your dates and details. The owner will approve or reject it.</p>
+                    <a href="{{ url_for('request.new', resource_id=resource.id, **request_args) }}" class="btn btn-primary w-100">Send Request</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>

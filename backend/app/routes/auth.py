@@ -3,9 +3,9 @@ import re
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from app.constants import ROLE_USER
 from app.data.tn_locations import DISTRICTS, is_valid_location
 from app.extensions import db
-from app.constants import ROLE_USER
 from app.models import User
 from app.services.notify import log_activity
 
