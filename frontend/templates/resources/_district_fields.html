@@ -1,0 +1,14 @@
+{# District + dependent taluk selects. `prefix` is '' for listings and 'request_' for booking forms. #}
+<div class="col-md-4">
+    <label class="form-label">District</label>
+    <select name="{{ prefix }}district" class="form-select" data-district-select required>
+        <option value="">Select district</option>
+        {% for d in districts %}<option value="{{ d }}" {{ 'selected' if form.get(prefix ~ 'district') == d }}>{{ d }}</option>{% endfor %}
+    </select>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Taluk <span class="text-muted small fw-normal">(depends on District)</span></label>
+    <select name="{{ prefix }}taluk" class="form-select" data-taluk-select data-selected="{{ form.get(prefix ~ 'taluk', '') }}" required>
+        <option value="">Select taluk</option>
+    </select>
+</div>

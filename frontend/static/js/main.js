@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 preview.src = URL.createObjectURL(file);
                 preview.classList.remove('d-none');
             }
+            var nameBox = document.querySelector('[data-image-name]');
+            if (nameBox) nameBox.textContent = file.name;
         });
     });
 });

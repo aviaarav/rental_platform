@@ -10,13 +10,18 @@
                 <p class="lead hero-text mb-4">
                     One account to rent tools, offer your skills and find resources and services near you.
                 </p>
-                <a href="{{ url_for('main.choose_role') }}" class="btn btn-light btn-lg rounded-pill px-4 fw-semibold text-primary">
-                    Get Started <i class="bi bi-arrow-right ms-1"></i>
+                <a href="{{ url_for('main.choose_role') }}" class="btn btn-light btn-lg rounded-pill px-5 fw-semibold text-primary">
+                    Get Started &nbsp;&gt;
                 </a>
                 <span class="hero-text ms-3 small">Free for every user</span>
             </div>
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="card shadow border-0 hero-card">
+                    <div class="hero-chip d-flex align-items-center gap-2">
+                        <span class="profile-avatar sm" style="width:28px;height:28px;font-size:.7rem;">R</span>
+                        <span><strong>Ravi - Electrician</strong><br><span class="text-muted">Rs. 350 / hour</span></span>
+                        <span class="fw-bold ms-2">4.6</span>
+                    </div>
                     <div class="img-placeholder"><i class="bi bi-image"></i></div>
                     <div class="card-body">
                         <h6 class="fw-bold text-deep mb-1">Honda Power Generator</h6>
@@ -36,29 +41,24 @@
     </div>
 </section>
 
-<section class="container py-5">
+<section class="container py-5" id="how-it-works">
     <div class="row g-4">
+        {% for icon, title, text in [('bi-tools', 'Rent Equipment', 'List your tools and rent them to people nearby.'),
+                                     ('bi-person-workspace', 'Hire Professionals', 'Electricians, plumbers, drivers and many more services.'),
+                                     ('bi-geo-alt', 'Find Nearby', 'Distance from your current location is calculated for you.')] %}
         <div class="col-md-4">
-            <div class="card h-100 p-3">
-                <div class="feature-icon mb-3"><i class="bi bi-tools"></i></div>
-                <h5 class="text-deep fw-bold">Rent Equipment</h5>
-                <p class="text-muted mb-0">List your tools and rent them to people nearby.</p>
+            <div class="card h-100 p-4">
+                <div class="d-flex gap-3">
+                    <div class="feature-icon"><i class="bi {{ icon }}"></i></div>
+                    <div>
+                        <h5 class="text-deep fw-bold mb-1">{{ title }}</h5>
+                        <p class="text-muted small mb-3">{{ text }}</p>
+                        <a href="{{ url_for('main.choose_role') }}" class="small fw-semibold text-decoration-none">Learn more</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card h-100 p-3">
-                <div class="feature-icon mb-3"><i class="bi bi-person-workspace"></i></div>
-                <h5 class="text-deep fw-bold">Hire Professionals</h5>
-                <p class="text-muted mb-0">Electricians, plumbers, drivers and many more services.</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 p-3">
-                <div class="feature-icon mb-3"><i class="bi bi-geo-alt"></i></div>
-                <h5 class="text-deep fw-bold">Find Nearby</h5>
-                <p class="text-muted mb-0">Distance from your current location is calculated for you.</p>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

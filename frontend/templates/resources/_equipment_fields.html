@@ -1,50 +1,44 @@
-<div class="col-md-6">
+<div class="col-md-4">
     <label class="form-label">Equipment Name</label>
     <input type="text" name="name" class="form-control" value="{{ form.get('name', '') }}" maxlength="120" required>
 </div>
-<div class="col-md-6">
+<div class="col-md-4">
     <label class="form-label">Category</label>
     <select name="category" class="form-select" required>
         <option value="">Select category</option>
-        {% for c in equipment_categories %}
-        <option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>
-        {% endfor %}
+        {% for c in equipment_categories %}<option value="{{ c }}" {{ 'selected' if form.get('category') == c }}>{{ c }}</option>{% endfor %}
     </select>
 </div>
 <div class="col-md-4">
     <label class="form-label">Condition</label>
     <select name="condition" class="form-select" required>
         <option value="">Select condition</option>
-        {% for c in conditions %}
-        <option value="{{ c }}" {{ 'selected' if form.get('condition') == c }}>{{ c }}</option>
-        {% endfor %}
+        {% for c in conditions %}<option value="{{ c }}" {{ 'selected' if form.get('condition') == c }}>{{ c }}</option>{% endfor %}
     </select>
 </div>
+{% with prefix='' %}{% include 'resources/_district_fields.html' %}{% endwith %}
 <div class="col-md-4">
     <label class="form-label">Pickup Method</label>
     <select name="pickup_method" class="form-select" required>
         <option value="">Select pickup method</option>
-        {% for p in pickup_methods %}
-        <option value="{{ p }}" {{ 'selected' if form.get('pickup_method') == p }}>{{ p }}</option>
-        {% endfor %}
+        {% for p in pickup_methods %}<option value="{{ p }}" {{ 'selected' if form.get('pickup_method') == p }}>{{ p }}</option>{% endfor %}
     </select>
 </div>
 <div class="col-md-4">
     <label class="form-label">Availability</label>
     <select name="availability" class="form-select" required>
-        {% for a in availability_options %}
-        <option value="{{ a }}" {{ 'selected' if form.get('availability', 'Available') == a }}>{{ a }}</option>
-        {% endfor %}
+        {% for a in availability_options %}<option value="{{ a }}" {{ 'selected' if form.get('availability', 'Available') == a }}>{{ a }}</option>{% endfor %}
     </select>
 </div>
-<div class="col-md-6">
+<div class="col-md-4">
     <label class="form-label">Security Deposit (Rs.)</label>
     <input type="number" name="security_deposit" class="form-control" min="0" step="1" value="{{ form.get('security_deposit', '') }}">
 </div>
-<div class="col-md-6">
+<div class="col-md-4">
     <label class="form-label">Rental Amount (Rs. per day)</label>
     <input type="number" name="price" class="form-control" min="1" step="1" value="{{ form.get('price', '') }}" required>
 </div>
+{% include 'resources/_coordinate_fields.html' %}
 <div class="col-12">
     <label class="form-label">Description</label>
     <textarea name="description" class="form-control" rows="3" maxlength="1000" required>{{ form.get('description', '') }}</textarea>

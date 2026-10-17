@@ -16,6 +16,27 @@ from app.config import FRONTEND_DIR, get_config
 from app.extensions import db, login_manager, migrate
 
 
+def timeago(value):
+    """'2 min ago', '3 hr ago', 'Yesterday', '4 days ago', else a date. `value` is naive UTC."""
+    from app.models.common import utcnow
+
+    if value is None:
+        return ''
+    seconds = int((utcnow() - value).total_seconds())
+    if seconds < 60:
+        return 'just now'
+    if seconds < 3600:
+        return f'{seconds // 60} min ago'
+    if seconds < 86400:
+        return f'{seconds // 3600} hr ago'
+    days = seconds // 86400
+    if days == 1:
+        return 'Yesterday'
+    if days < 7:
+        return f'{days} days ago'
+    return value.strftime('%d %b %Y')
+
+
 def create_app(config=None):
     """Build and configure the Flask app.
 
@@ -40,6 +61,8 @@ def create_app(config=None):
 
     from app.cli import register_commands
     register_commands(app)
+
+    app.add_template_filter(timeago, 'timeago')
 
     @app.before_request
     def stop_blocked_users():

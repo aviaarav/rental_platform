@@ -2,60 +2,57 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-{% from 'partials/_status_badge.html' import status_badge %}
-<h4 class="fw-bold text-deep">Dashboard Overview</h4>
-<p class="text-muted">Summary of users, listings and bookings</p>
+<h4 class="page-title mb-0">Dashboard Overview</h4>
+<p class="text-muted small">Summary of users, listings and bookings</p>
 
+{% set tiles = [
+    (stats.total_users, 'Total Users', '', url_for('admin.users')),
+    (stats.equipment, 'Equipment Resources', '', url_for('admin.resources', type='Equipment')),
+    (stats.services, 'Professional Services', '', url_for('admin.resources', type='Professional')),
+    (stats.total_bookings, 'Total Booking Requests', '', url_for('admin.bookings')),
+    (booking_counts['Pending'], 'Pending Requests', 'stat-warning', url_for('admin.bookings', status='pending')),
+    (booking_counts['Approved'] + booking_counts['Borrowed'], 'Approved Bookings', 'stat-success', url_for('admin.bookings', status='approved')),
+    (booking_counts['Returned'], 'Completed / Returned', 'stat-slate', url_for('admin.bookings', status='returned')),
+    (stats.blocked_users, 'Blocked Users', 'stat-danger', url_for('admin.users', status='blocked')),
+] %}
 <div class="row g-3">
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.users') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.total_users }}</div><div class="text-muted small">Total Users</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.users', status='blocked') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-danger">{{ stats.blocked_users }}</div><div class="text-muted small">Blocked Users</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.resources') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.total_resources }}</div><div class="text-muted small">Listings ({{ stats.equipment }} equipment, {{ stats.services }} services)</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.resources', visibility='hidden') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-danger">{{ stats.hidden_resources }}</div><div class="text-muted small">Hidden Listings</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.bookings') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.total_bookings }}</div><div class="text-muted small">Total Bookings</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.bookings', status='pending') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-warning">{{ booking_counts['Pending'] }}</div><div class="text-muted small">Pending Requests</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><a href="{{ url_for('admin.bookings', status='borrowed') }}" class="text-decoration-none"><div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ booking_counts['Approved'] + booking_counts['Borrowed'] }}</div><div class="text-muted small">Approved or In Progress</div></div></a></div>
-    <div class="col-sm-6 col-lg-3"><div class="card p-3"><div class="fs-2 fw-bold text-primary">{{ stats.reviews }}</div><div class="text-muted small">Reviews</div></div></div>
+    {% for number, label, cls, href in tiles %}
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ href }}" class="text-decoration-none">
+            <div class="card stat-card p-3 {{ cls }}"><div class="stat-number">{{ number }}</div><div class="small text-muted">{{ label }}</div></div>
+        </a>
+    </div>
+    {% endfor %}
 </div>
 
+{% set max_count = [booking_counts.values()|max, 1]|max %}
 <div class="row g-3 mt-1">
-    <div class="col-lg-7">
+    <div class="col-lg-6">
         <div class="card p-3 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="fw-bold text-deep mb-0">Recent Bookings</h6>
-                <a href="{{ url_for('admin.bookings') }}" class="small">View all</a>
+            <h6 class="fw-bold text-deep mb-3">Bookings by Status</h6>
+            {% for status, count in booking_counts.items() %}
+            <div class="status-bar-row">
+                <span class="label">{{ status }}</span>
+                <span class="status-bar-track">
+                    <span class="status-bar-fill status-{{ status|lower }}" style="width: {{ (count / max_count * 100)|round(1) }}%;"></span>
+                    <span class="count">{{ count }}</span>
+                </span>
             </div>
-            {% if recent_bookings %}
-            <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
-                    <thead><tr><th>Resource</th><th>Borrower</th><th>Dates</th><th>Status</th></tr></thead>
-                    <tbody>
-                    {% for b in recent_bookings %}
-                        <tr>
-                            <td>{{ b.resource.name }}</td>
-                            <td><a href="{{ url_for('admin.user_detail', user_id=b.borrower_id) }}">{{ b.borrower.full_name }}</a></td>
-                            <td class="small">{{ b.start_date.strftime('%d %b') }} - {{ b.end_date.strftime('%d %b %Y') }}</td>
-                            <td>{{ status_badge(b.status) }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}<p class="small text-muted mb-0">No bookings yet.</p>{% endif %}
+            {% endfor %}
         </div>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-6">
         <div class="card p-3 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold text-deep mb-0">Recent Activity</h6>
                 <a href="{{ url_for('admin.logs') }}" class="small">View all</a>
             </div>
             {% if recent_logs %}
-            <ul class="list-unstyled small mb-0">
+            <ul class="activity-list">
             {% for log in recent_logs %}
-                <li class="py-1 {{ 'border-bottom' if not loop.last }}">
-                    <span class="fw-semibold">{{ log.action }}</span>
-                    {% if log.details %}<span class="text-muted">&middot; {{ log.details }}</span>{% endif %}
-                    <div class="text-muted">{{ log.actor.full_name if log.actor else 'System' }} &middot; {{ log.created_at.strftime('%d %b, %H:%M') }}</div>
+                <li>
+                    {{ log.actor.full_name if log.actor else 'System' }} &middot; {{ log.action|lower }}{% if log.details %} "{{ log.details }}"{% endif %}
+                    <div class="text-muted small">{{ log.created_at|timeago }}</div>
                 </li>
             {% endfor %}
             </ul>

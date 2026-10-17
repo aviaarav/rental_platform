@@ -1,0 +1,33 @@
+{# Right-hand column of the booking forms: live route map, cost estimate, availability note, buttons. #}
+<div class="card p-3 mb-3">
+    <h6 class="fw-bold text-deep">Your Location and Route</h6>
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <button type="button" class="btn btn-outline-primary flex-grow-1" data-use-location>Use My Current Location</button>
+        <span class="location-captured d-none" data-location-captured>Location captured</span>
+    </div>
+    <div data-route-map></div>
+    <div class="small text-muted mt-2" data-location-status></div>
+    <div class="d-flex justify-content-between align-items-center gap-2 mt-1">
+        <span class="small text-muted" data-route-coords style="font-size: .75rem;"></span>
+        <span class="fw-bold text-primary text-nowrap" data-route-distance></span>
+    </div>
+    <div class="row g-2 mt-1">
+        <div class="col-6"><input type="text" name="borrower_latitude" class="form-control form-control-sm" placeholder="Latitude" value="{{ form.get('borrower_latitude', '') }}" data-lat-input></div>
+        <div class="col-6"><input type="text" name="borrower_longitude" class="form-control form-control-sm" placeholder="Longitude" value="{{ form.get('borrower_longitude', '') }}" data-lng-input></div>
+    </div>
+</div>
+
+<div class="estimate-box mb-3" data-estimate></div>
+
+{% if dates_free is true %}
+<div class="alert alert-success py-2 small mb-3">Dates are available. No overlapping bookings found.</div>
+{% elif dates_free is false %}
+<div class="alert alert-danger py-2 small mb-3">Those dates overlap an existing booking. Choose different dates.</div>
+{% else %}
+<div class="info-box small mb-3">Dates are checked on the server against Pending, Approved, Booked and Borrowed requests. Overlaps are rejected.</div>
+{% endif %}
+
+<div class="d-flex gap-2">
+    <button class="btn btn-primary btn-lg flex-grow-1">Send Request</button>
+    <a class="btn btn-outline-primary btn-lg px-4" href="{{ url_for('resource.detail', resource_id=resource.id) }}">Cancel</a>
+</div>

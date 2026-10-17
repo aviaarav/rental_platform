@@ -7,7 +7,11 @@ def test_profile_page_renders(client, borrower):
     login(client, borrower.email)
     page = client.get('/profile')
     assert page.status_code == 200
-    assert b'Borrower Two' in page.data and b'Change Password' in page.data
+    assert b'Borrower Two' in page.data and b'Edit Profile' in page.data
+    assert b'Change Password' not in page.data
+
+    page = client.get('/profile?edit=1')
+    assert b'Change Password' in page.data and b'Save Changes' in page.data
 
 
 def test_update_details(client, borrower):

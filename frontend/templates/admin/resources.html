@@ -5,22 +5,24 @@
 {% block content %}
 {% from 'partials/_status_badge.html' import status_badge %}
 {% from 'admin/_pagination.html' import paginate %}
+<h4 class="page-title mb-3">Resource Management</h4>
+
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h4 class="fw-bold text-deep mb-0">Resources</h4>
-    <form method="get" class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('admin.resources', q=q or None, visibility=visibility or None) }}" class="btn btn-sm rounded-pill px-3 {{ 'btn-primary' if not rtype else 'btn-outline-primary' }}">All ({{ type_counts['all'] }})</a>
+        <a href="{{ url_for('admin.resources', type=type_equipment, q=q or None, visibility=visibility or None) }}" class="btn btn-sm rounded-pill px-3 {{ 'btn-primary' if rtype == type_equipment else 'btn-outline-primary' }}">Equipment ({{ type_counts[type_equipment] }})</a>
+        <a href="{{ url_for('admin.resources', type=type_professional, q=q or None, visibility=visibility or None) }}" class="btn btn-sm rounded-pill px-3 {{ 'btn-primary' if rtype == type_professional else 'btn-outline-primary' }}">Professional ({{ type_counts[type_professional] }})</a>
+    </div>
+    <form method="get" class="d-flex gap-2">
+        {% if rtype %}<input type="hidden" name="type" value="{{ rtype }}">{% endif %}
         <input type="text" name="q" class="form-control form-control-sm" placeholder="Name, category or owner" value="{{ q }}">
-        <select name="type" class="form-select form-select-sm" style="width: auto;">
-            <option value="" {{ 'selected' if not rtype }}>All types</option>
-            <option value="{{ type_equipment }}" {{ 'selected' if rtype == type_equipment }}>Equipment</option>
-            <option value="{{ type_professional }}" {{ 'selected' if rtype == type_professional }}>Professional</option>
-        </select>
         <select name="visibility" class="form-select form-select-sm" style="width: auto;">
             <option value="" {{ 'selected' if not visibility }}>Visible and hidden</option>
             <option value="visible" {{ 'selected' if visibility == 'visible' }}>Visible</option>
             <option value="hidden" {{ 'selected' if visibility == 'hidden' }}>Hidden</option>
         </select>
-        <button class="btn btn-primary btn-sm">Filter</button>
-        {% if q or rtype or visibility %}<a href="{{ url_for('admin.resources') }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
+        <button class="btn btn-primary btn-sm">Search</button>
+        {% if q or visibility %}<a href="{{ url_for('admin.resources', type=rtype or None) }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
     </form>
 </div>
 
@@ -28,30 +30,30 @@
 <div class="card">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
-            <thead><tr><th>Listing</th><th>Owner</th><th>Type</th><th>Price</th><th>Location</th><th>Availability</th><th>Bookings</th><th>Visibility</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Category</th><th>Owner</th><th>Price</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
             {% for r in resources %}
                 <tr>
+                    <td class="text-muted">{{ r.id }}</td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            {% if r.image_path %}<img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="thumb" alt="">{% else %}<div class="thumb d-flex align-items-center justify-content-center text-primary"><i class="bi bi-image"></i></div>{% endif %}
-                            <div><div class="fw-semibold">{{ r.name }}</div><div class="small text-muted">{{ r.category }}</div></div>
+                            {% if r.image_path %}<img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="thumb" alt="">{% endif %}
+                            <span class="fw-semibold">{{ r.name }}</span>
                         </div>
                     </td>
-                    <td class="small"><a href="{{ url_for('admin.user_detail', user_id=r.owner_id) }}">{{ r.owner.full_name }}</a></td>
-                    <td><span class="badge {{ 'text-bg-primary' if r.is_equipment else 'bg-navy' }}">{{ r.resource_type }}</span></td>
-                    <td class="small">{{ r.price_label }}</td>
-                    <td class="small">{{ r.taluk }}, {{ r.district }}</td>
-                    <td>{{ status_badge(r.availability) }}</td>
-                    <td>{{ r.bookings.count() }}</td>
-                    <td>{% if r.is_hidden %}<span class="badge-status status-hidden">Hidden</span>{% else %}<span class="small text-muted">Visible</span>{% endif %}</td>
+                    <td>{{ r.resource_type }}</td>
+                    <td>{{ r.category }}</td>
+                    <td><a href="{{ url_for('admin.user_detail', user_id=r.owner_id) }}" class="text-decoration-none">{{ r.owner.full_name }}</a></td>
+                    <td class="text-nowrap">{{ r.price_label|replace(' / ', '/')|replace('hour', 'hr') }}</td>
+                    <td>{{ r.taluk }}</td>
+                    <td>{% if r.is_hidden %}{{ status_badge('Hidden') }}{% else %}{{ status_badge(r.availability) }}{% endif %}</td>
                     <td>
                         <div class="d-flex gap-1">
                             <a href="{{ url_for('resource.detail', resource_id=r.id) }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener">View</a>
                             {% if r.is_hidden %}
-                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='unhide') }}"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-success btn-sm">Unhide</button></form>
+                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='unhide') }}"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-success btn-sm">Show</button></form>
                             {% else %}
-                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='hide') }}" onsubmit="return confirm('Hide this listing from other users?');"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-danger btn-sm">Hide</button></form>
+                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='hide') }}" onsubmit="return confirm('Hide this listing from other users?');"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-warning btn-sm">Hide</button></form>
                             {% endif %}
                         </div>
                     </td>
@@ -61,9 +63,10 @@
         </table>
     </div>
 </div>
-{{ paginate(pagination, 'admin.resources', page_args) }}
-<p class="small text-muted mt-3">Hiding a listing removes it from browse and search for other users; the owner can still see and edit it, and is notified.</p>
+{{ paginate(pagination, 'admin.resources', page_args, 'listings') }}
 {% else %}
 <div class="card p-5 text-center"><div class="display-5 text-primary mb-2"><i class="bi bi-tools"></i></div><h5 class="fw-bold text-deep">No listings found</h5><p class="text-muted mb-0">Try different filters.</p></div>
 {% endif %}
+
+<div class="info-box mt-4">Hiding or removing an invalid listing never deletes existing booking records or reviews. The owner is notified and can still see the listing.</div>
 {% endblock %}

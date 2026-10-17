@@ -2,6 +2,7 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+{% from 'partials/_avatar.html' import initials %}
 <div class="container py-4">
     <div class="welcome-banner mb-4">
         <h3 class="fw-bold mb-1">Welcome, {{ current_user.full_name }}!</h3>
@@ -12,10 +13,10 @@
         <div class="col-lg-4">
             <div class="card p-3 h-100">
                 <div class="text-center mb-3">
-                    <div class="profile-avatar mx-auto mb-2">{{ current_user.full_name[:1]|upper }}</div>
-                    <div class="fw-bold text-deep">{{ current_user.full_name }}</div>
+                    <div class="profile-avatar mx-auto mb-2">{{ initials(current_user.full_name) }}</div>
+                    <div class="fw-bold text-deep fs-5">{{ current_user.full_name }}</div>
                 </div>
-                <div class="small profile-lines">
+                <div class="profile-lines">
                     <div><span class="text-muted">Email</span><strong>{{ current_user.email }}</strong></div>
                     <div><span class="text-muted">Phone</span><strong>{{ current_user.phone }}</strong></div>
                     <div><span class="text-muted">District</span><strong>{{ current_user.district }}</strong></div>
@@ -28,38 +29,28 @@
         <div class="col-lg-8">
             <div class="row g-3 mb-4">
                 <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.resources }}</div><div class="small text-muted">Resources Listed</div></div></div>
-                <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.received }}</div><div class="small text-muted">Requests Received</div></div></div>
-                <div class="col-sm-4"><div class="card stat-card p-3"><div class="stat-number">{{ stats.sent }}</div><div class="small text-muted">Requests Sent</div></div></div>
+                <div class="col-sm-4"><a href="{{ url_for('request.received') }}" class="text-decoration-none"><div class="card stat-card p-3"><div class="stat-number">{{ stats.received }}</div><div class="small text-muted">Requests Received</div></div></a></div>
+                <div class="col-sm-4"><a href="{{ url_for('request.sent') }}" class="text-decoration-none"><div class="card stat-card p-3"><div class="stat-number">{{ stats.sent }}</div><div class="small text-muted">Requests Sent</div></div></a></div>
             </div>
 
             <h6 class="fw-bold text-deep mb-3">Quick Actions</h6>
             <div class="row g-3">
+                {% for n, href, title, text in [
+                    (1, url_for('resource.browse'), 'Browse Resources', 'Find equipment and services near you'),
+                    (2, url_for('resource.add_equipment'), 'Add Equipment', 'List an item for rent'),
+                    (3, url_for('resource.add_service'), 'Add Service', 'Offer your professional skills'),
+                    (4, url_for('request.received'), 'Received Requests', 'Approve or reject new requests')] %}
                 <div class="col-sm-6">
-                    <a href="{{ url_for('resource.browse') }}" class="action-card"><span class="action-icon"><i class="bi bi-search"></i></span>
-                        <span><strong>Browse Resources</strong><small>Find equipment and services near you</small></span></a>
+                    <a href="{{ href }}" class="action-card">
+                        <span class="action-icon">{{ n }}</span>
+                        <span><strong class="text-deep">{{ title }}</strong><small>{{ text }}</small><span class="open-link">Open &nbsp;&gt;</span></span>
+                    </a>
                 </div>
-                <div class="col-sm-6">
-                    <a href="{{ url_for('resource.add_equipment') }}" class="action-card"><span class="action-icon"><i class="bi bi-tools"></i></span>
-                        <span><strong>Add Equipment</strong><small>List an item for rent</small></span></a>
-                </div>
-                <div class="col-sm-6">
-                    <a href="{{ url_for('resource.add_service') }}" class="action-card"><span class="action-icon"><i class="bi bi-person-workspace"></i></span>
-                        <span><strong>Add Service</strong><small>Offer your professional skills</small></span></a>
-                </div>
-                <div class="col-sm-6">
-                    <a href="{{ url_for('resource.my_items') }}" class="action-card"><span class="action-icon"><i class="bi bi-box-seam"></i></span>
-                        <span><strong>My Items</strong><small>Manage your listings</small></span></a>
-                </div>
-                <div class="col-sm-6">
-                    <a href="{{ url_for('request.received') }}" class="action-card"><span class="action-icon"><i class="bi bi-inbox"></i></span>
-                        <span><strong>Requests Received</strong><small>Approve or reject booking requests</small></span></a>
-                </div>
-                <div class="col-sm-6">
-                    <a href="{{ url_for('request.sent') }}" class="action-card"><span class="action-icon"><i class="bi bi-send"></i></span>
-                        <span><strong>Requests Sent</strong><small>Track bookings and write reviews</small></span></a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
+
+    <div class="info-box mt-4">New booking alerts appear as a popup with a sound when you log in.</div>
 </div>
 {% endblock %}

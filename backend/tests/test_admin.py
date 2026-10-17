@@ -111,4 +111,4 @@ def test_users_list_paginates(client, admin):
     admin_login(client, admin)
     first = client.get('/admin/users').data
     second = client.get('/admin/users?page=2').data
-    assert b'25 total, page 1 of 2' in first and b'page 2 of 2' in second
+    assert b'Showing 1-20 of 25 users' in first and b'Showing 21-25 of 25 users' in second

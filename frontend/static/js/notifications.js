@@ -20,18 +20,41 @@ document.addEventListener('DOMContentLoaded', function () {
         badge.classList.toggle('d-none', count === 0);
     }
 
+    // A short two-tone chime, generated in the browser so no audio file is needed.
+    // Browsers only allow sound after the user has interacted with the page; failures are ignored.
+    function chime() {
+        try {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            var ctx = new Ctx();
+            [[880, 0], [1175, 0.14]].forEach(function (note) {
+                var osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = note[0];
+                gain.gain.setValueAtTime(0.0001, ctx.currentTime + note[1]);
+                gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + note[1] + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + note[1] + 0.25);
+                osc.connect(gain).connect(ctx.destination);
+                osc.start(ctx.currentTime + note[1]);
+                osc.stop(ctx.currentTime + note[1] + 0.3);
+            });
+        } catch (e) { /* no sound */ }
+    }
+
     function showToast(item) {
         var toast = document.createElement('div');
-        toast.className = 'toast';
+        toast.className = 'toast toast-rs';
         toast.setAttribute('role', 'status');
         toast.innerHTML =
-            '<div class="toast-header"><i class="bi bi-bell-fill text-primary me-2"></i>' +
-            '<strong class="me-auto"></strong>' +
-            '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>' +
-            '<div class="toast-body"></div>';
-        toast.querySelector('strong').textContent = item.title;
+            '<div class="toast-body">' +
+            '<div class="d-flex justify-content-between align-items-start gap-2">' +
+            '<div class="toast-title"></div>' +
+            '<button type="button" class="btn-close btn-sm" data-bs-dismiss="toast" aria-label="Close"></button></div>' +
+            '<div class="small text-muted toast-message"></div></div>';
+        toast.querySelector('.toast-title').textContent = item.title;
         var body = toast.querySelector('.toast-body');
-        body.textContent = item.message;
+        body.querySelector('.toast-message').textContent = item.message;
+        chime();
         if (item.link) {
             // The link marks the notification read on the server, so it is a POST form.
             var form = document.createElement('form');

@@ -1,11 +1,18 @@
 <div class="col-12">
-    <label class="form-label">Image <span class="text-muted small">(PNG, JPG or WEBP, max 5 MB, optional)</span></label>
-    <div class="d-flex align-items-center gap-3">
-        <input type="file" name="image" class="form-control" accept=".png,.jpg,.jpeg,.webp" data-image-input>
-        {% if resource is defined and resource and resource.image_path %}
-            <img src="{{ url_for('uploads.serve', filename=resource.image_path) }}" class="thumb" alt="Current image" data-image-preview>
-        {% else %}
-            <img class="thumb d-none" alt="Preview" data-image-preview>
-        {% endif %}
+    <label class="form-label">{{ 'Profile Image' if (resource is defined and resource and resource.is_professional) or request.endpoint == 'resource.add_service' else 'Equipment Image' }} <span class="text-muted small fw-normal">(optional, max 5 MB)</span></label>
+    <div class="d-flex align-items-start gap-3">
+        <label class="upload-box flex-grow-1" style="max-width: 320px;">
+            <input type="file" name="image" class="d-none" accept=".png,.jpg,.jpeg,.webp" data-image-input>
+            <span><span data-image-name>Choose file</span> <span class="text-muted fw-normal">(jpg / png / webp)</span></span>
+        </label>
+        <div class="text-center">
+            {% if resource is defined and resource and resource.image_path %}
+                <img src="{{ url_for('uploads.serve', filename=resource.image_path) }}" class="upload-preview" alt="Current image" data-image-preview>
+            {% else %}
+                <div class="upload-preview d-flex align-items-center justify-content-center" style="color:#9ec1fb;font-size:1.8rem;" data-image-placeholder><i class="bi bi-image"></i></div>
+                <img class="upload-preview d-none" alt="Preview" data-image-preview>
+            {% endif %}
+            <div class="small text-muted mt-1">Preview</div>
+        </div>
     </div>
 </div>

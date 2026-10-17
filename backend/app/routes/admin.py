@@ -14,6 +14,7 @@ from app.constants import (
     TYPE_EQUIPMENT,
     TYPE_PROFESSIONAL,
 )
+from app.data.tn_locations import DISTRICTS
 from app.extensions import db
 from app.models import ActivityLog, BookingRequest, Resource, Review, User
 from app.services.notify import create_notification, log_activity
@@ -78,10 +79,9 @@ def dashboard():
         'total_bookings': BookingRequest.query.count(),
         'reviews': Review.query.count(),
     }
-    recent_bookings = BookingRequest.query.order_by(BookingRequest.created_at.desc()).limit(5).all()
     recent_logs = ActivityLog.query.order_by(ActivityLog.created_at.desc()).limit(8).all()
     return render_template('admin/dashboard.html', stats=stats, booking_counts=_booking_counts(),
-                           recent_bookings=recent_bookings, recent_logs=recent_logs)
+                           recent_logs=recent_logs)
 
 
 # ---------- users ----------
@@ -91,8 +91,13 @@ def dashboard():
 def users():
     q = request.args.get('q', '').strip()
     status = request.args.get('status', '').strip()
+    district = request.args.get('district', '').strip()
 
     query = User.query.filter_by(role=ROLE_USER)
+    if district in DISTRICTS:
+        query = query.filter(User.district == district)
+    else:
+        district = ''
     if q:
         like = f'%{q}%'
         query = query.filter(or_(User.full_name.ilike(like), User.email.ilike(like), User.phone.ilike(like)))
@@ -105,7 +110,7 @@ def users():
 
     pagination = _paginate(query.order_by(User.created_at.desc()))
     return render_template('admin/users.html', pagination=pagination, users=pagination.items,
-                           q=q, status=status, page_args=_page_args())
+                           q=q, status=status, district=district, districts=DISTRICTS, page_args=_page_args())
 
 
 @admin_bp.route('/users/<int:user_id>')
@@ -160,9 +165,15 @@ def resources():
         visibility = ''
 
     pagination = _paginate(query.order_by(Resource.created_at.desc()))
+    type_counts = {
+        'all': Resource.query.count(),
+        TYPE_EQUIPMENT: Resource.query.filter_by(resource_type=TYPE_EQUIPMENT).count(),
+        TYPE_PROFESSIONAL: Resource.query.filter_by(resource_type=TYPE_PROFESSIONAL).count(),
+    }
     return render_template('admin/resources.html', pagination=pagination, resources=pagination.items,
                            q=q, rtype=rtype, visibility=visibility, page_args=_page_args(),
-                           type_equipment=TYPE_EQUIPMENT, type_professional=TYPE_PROFESSIONAL)
+                           type_equipment=TYPE_EQUIPMENT, type_professional=TYPE_PROFESSIONAL,
+                           type_counts=type_counts)
 
 
 @admin_bp.route('/resources/<int:resource_id>/<action>', methods=['POST'])

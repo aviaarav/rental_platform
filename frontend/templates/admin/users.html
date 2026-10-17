@@ -4,35 +4,43 @@
 
 {% block content %}
 {% from 'admin/_pagination.html' import paginate %}
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h4 class="fw-bold text-deep mb-0">Users</h4>
-    <form method="get" class="d-flex gap-2">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="Name, email or phone" value="{{ q }}">
-        <select name="status" class="form-select form-select-sm" style="width: auto;">
-            <option value="" {{ 'selected' if not status }}>All</option>
+<h4 class="page-title mb-3">User Management</h4>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Search name, email or phone" value="{{ q }}"></div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="" {{ 'selected' if not status }}>All Status</option>
             <option value="active" {{ 'selected' if status == 'active' }}>Active</option>
             <option value="blocked" {{ 'selected' if status == 'blocked' }}>Blocked</option>
         </select>
-        <button class="btn btn-primary btn-sm">Search</button>
-        {% if q or status %}<a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
-    </form>
-</div>
+    </div>
+    <div class="col-md-3">
+        <select name="district" class="form-select">
+            <option value="" {{ 'selected' if not district }}>All Districts</option>
+            {% for d in districts %}<option value="{{ d }}" {{ 'selected' if district == d }}>{{ d }}</option>{% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-primary px-4">Filter</button>
+        {% if q or status or district %}<a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary">Reset</a>{% endif %}
+    </div>
+</form>
 
 {% if users %}
 <div class="card">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
-            <thead><tr><th>Name</th><th>Contact</th><th>Location</th><th>Listings</th><th>Bookings</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>District / Taluk</th><th>Listings</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
             {% for u in users %}
                 <tr>
-                    <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="fw-semibold text-decoration-none">{{ u.full_name }}</a></td>
-                    <td class="small">{{ u.email }}<div class="text-muted">{{ u.phone }}</div></td>
-                    <td class="small">{{ u.taluk }}, {{ u.district }}</td>
+                    <td class="text-muted">{{ u.id }}</td>
+                    <td><a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="fw-semibold text-decoration-none text-deep">{{ u.full_name }}</a><div class="small text-muted">{{ u.phone }}</div></td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.district }} / {{ u.taluk }}</td>
                     <td>{{ u.resources.count() }}</td>
-                    <td class="small">{{ u.bookings_made.count() }} sent<div class="text-muted">{{ u.bookings_received.count() }} received</div></td>
-                    <td class="small">{{ u.created_at.strftime('%d %b %Y') }}</td>
-                    <td>{% if u.is_blocked %}<span class="badge-status status-blocked">Blocked</span>{% else %}<span class="badge-status status-available">Active</span>{% endif %}</td>
+                    <td>{% if u.is_blocked %}<span class="badge-status status-blocked">Blocked</span>{% else %}<span class="badge-status status-active">Active</span>{% endif %}</td>
                     <td>
                         <div class="d-flex gap-1">
                             <a href="{{ url_for('admin.user_detail', user_id=u.id) }}" class="btn btn-outline-primary btn-sm">View</a>
@@ -49,8 +57,10 @@
         </table>
     </div>
 </div>
-{{ paginate(pagination, 'admin.users', page_args) }}
+{{ paginate(pagination, 'admin.users', page_args, 'users') }}
 {% else %}
 <div class="card p-5 text-center"><div class="display-5 text-primary mb-2"><i class="bi bi-people"></i></div><h5 class="fw-bold text-deep">No users found</h5><p class="text-muted mb-0">Try a different search.</p></div>
 {% endif %}
+
+<div class="info-box mt-4">Blocking a user stops access to protected features. Their listings, bookings and reviews are kept.</div>
 {% endblock %}

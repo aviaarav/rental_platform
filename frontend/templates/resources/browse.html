@@ -4,66 +4,62 @@
 {% block content %}
 {% from 'partials/_status_badge.html' import status_badge %}
 <div class="container py-4">
-    <h3 class="fw-bold text-deep mb-3">Browse Resources</h3>
-
     <form method="get" class="card p-3 mb-3">
         <input type="hidden" name="lat" value="{{ user_lat if location_on else '' }}" data-lat-input>
         <input type="hidden" name="lng" value="{{ user_lng if location_on else '' }}" data-lng-input>
-        <div class="row g-2">
-            <div class="col-lg-4">
-                <input type="text" name="q" class="form-control" placeholder="Search name or keyword" value="{{ keyword }}">
-            </div>
-            <div class="col-lg-2 col-md-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-lg-3 col-md-6"><input type="text" name="q" class="form-control" placeholder="Search name or keyword" value="{{ keyword }}"></div>
+            <div class="col-lg-2 col-md-6">
                 <select name="type" class="form-select">
                     <option value="">Equipment / Pro</option>
                     <option value="Equipment" {{ 'selected' if rtype == 'Equipment' }}>Equipment</option>
                     <option value="Professional" {{ 'selected' if rtype == 'Professional' }}>Professional</option>
                 </select>
             </div>
-            <div class="col-lg-3 col-md-4">
+            <div class="col-lg-2 col-md-6">
                 <select name="category" class="form-select">
                     <option value="">All Categories</option>
-                    <optgroup label="Equipment">
-                        {% for c in equipment_categories %}<option value="{{ c }}" {{ 'selected' if category == c }}>{{ c }}</option>{% endfor %}
-                    </optgroup>
-                    <optgroup label="Professional">
-                        {% for c in service_categories %}<option value="{{ c }}" {{ 'selected' if category == c }}>{{ c }}</option>{% endfor %}
-                    </optgroup>
+                    <optgroup label="Equipment">{% for c in equipment_categories %}<option value="{{ c }}" {{ 'selected' if category == c }}>{{ c }}</option>{% endfor %}</optgroup>
+                    <optgroup label="Professional">{% for c in service_categories %}<option value="{{ c }}" {{ 'selected' if category == c }}>{{ c }}</option>{% endfor %}</optgroup>
                 </select>
             </div>
-            <div class="col-lg-3 col-md-4">
+            <div class="col-lg-2 col-md-6">
                 <select name="district" class="form-select">
                     <option value="">All Districts</option>
                     {% for d in districts %}<option value="{{ d }}" {{ 'selected' if district == d }}>{{ d }}</option>{% endfor %}
                 </select>
             </div>
+            <div class="col-lg-3 col-md-12 d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1">Search</button>
+                <a href="{{ url_for('resource.browse') }}" class="btn btn-outline-primary">Reset</a>
+            </div>
 
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label small text-muted mb-0">Start Date</label>
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label small text-muted mb-0 fw-normal">Start Date</label>
                 <input type="date" name="start" class="form-control" value="{{ start.isoformat() if start else '' }}" data-start-date>
             </div>
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label small text-muted mb-0">End Date</label>
+            <div class="col-lg-2 col-md-6">
+                <label class="form-label small text-muted mb-0 fw-normal">End Date</label>
                 <input type="date" name="end" class="form-control" value="{{ end.isoformat() if end else '' }}" data-end-date>
             </div>
-            <div class="col-lg-2 col-md-4">
-                <label class="form-label small text-muted mb-0">Distance</label>
+            <div class="col-lg-3 col-md-6">
+                <button type="button" class="btn btn-outline-primary w-100" data-use-location data-auto-submit>
+                    {{ 'Update My Location' if location_on else 'Use My Current Location' }}
+                </button>
+            </div>
+            <div class="col-lg-2 col-md-6">
                 <select name="radius" class="form-select">
                     <option value="">Any distance</option>
                     {% for r in radius_options %}<option value="{{ r }}" {{ 'selected' if radius == r }}>Within {{ r }} km</option>{% endfor %}
                 </select>
             </div>
-            <div class="col-lg-3 col-md-6 d-flex align-items-end gap-2">
-                <button type="button" class="btn btn-outline-primary flex-grow-1" data-use-location data-auto-submit>
-                    <i class="bi bi-geo-alt me-1"></i>{{ 'Update Location' if location_on else 'Use My Current Location' }}
-                </button>
+            <div class="col-lg-3 col-md-12 d-flex align-items-center gap-2">
                 {% if location_on %}
-                <button type="button" class="btn btn-outline-secondary" data-clear-location title="Turn location off"><i class="bi bi-x-lg"></i></button>
+                    <span class="location-captured">Location on</span>
+                    <button type="button" class="btn btn-link btn-sm p-0 text-muted" data-clear-location>turn off</button>
+                {% else %}
+                    <span class="small text-muted" data-location-status>Location is off</span>
                 {% endif %}
-            </div>
-            <div class="col-lg-3 col-md-6 d-flex align-items-end gap-2">
-                <button class="btn btn-primary flex-grow-1">Search</button>
-                <a href="{{ url_for('resource.browse') }}" class="btn btn-outline-primary">Reset</a>
             </div>
         </div>
         {% if date_filter %}
@@ -72,15 +68,12 @@
             <label class="form-check-label" for="showBooked">Also show resources that are already booked for these dates</label>
         </div>
         {% endif %}
-        <div class="small mt-2 {{ 'text-success' if location_on else 'text-muted' }}" data-location-status>
-            {% if location_on %}<i class="bi bi-geo-alt-fill"></i> Your location is on. Results are sorted by distance.
-            {% else %}Location is off. Allow it to see distances and sort by nearest.{% endif %}
-        </div>
+        {% if not location_on %}<div class="small text-muted mt-2 d-none" data-location-status></div>{% endif %}
     </form>
 
     <p class="small text-muted mb-3">
-        Showing {{ entries|length }} of {{ total }} result{{ '' if total == 1 else 's' }}
-        {% if date_filter %} for {{ start.strftime('%d %b') }} - {{ end.strftime('%d %b %Y') }}{% endif %}
+        Showing {{ entries|length }} of {{ total }} result{{ '' if total == 1 else 's' }}{% if location_on %}, sorted by distance{% endif %}
+        {% if date_filter %} ({{ start.strftime('%d %b') }} - {{ end.strftime('%d %b') }}){% endif %}
         {% if hidden_booked %}
             &middot; {{ hidden_booked }} hidden because already booked for these dates
             (<a href="{{ url_for('resource.browse', show_booked=1, **page_args) }}">show them</a>)
@@ -93,44 +86,51 @@
         {% set r = e.r %}
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 resource-card">
-                {% if r.image_path %}
-                    <img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="card-img-top" alt="{{ r.name }}">
-                {% else %}
-                    <div class="img-placeholder"><i class="bi bi-image"></i></div>
-                {% endif %}
+                <div class="p-3 pb-0">
+                    {% if r.image_path %}
+                        <img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="card-img-top rounded-3" alt="{{ r.name }}">
+                    {% else %}
+                        <div class="img-placeholder rounded-3"><i class="bi bi-image"></i></div>
+                    {% endif %}
+                </div>
                 <div class="card-body d-flex flex-column">
                     <h6 class="fw-bold text-deep mb-1">{{ r.name }}</h6>
                     <div class="small text-muted mb-2">
-                        {{ r.resource_type }} &middot; {{ r.category }}{% if r.is_professional and r.experience is not none %} &middot; {{ r.experience }} yrs{% endif %}
+                        {{ r.resource_type }} &nbsp;|&nbsp; {{ r.category }}{% if r.is_professional and r.experience is not none %} &nbsp;|&nbsp; {{ r.experience }} yrs{% endif %}
                     </div>
-                    <div class="fw-bold text-primary">{{ r.price_label }}</div>
-                    {% if r.is_equipment %}
-                        <div class="small text-muted">Deposit: Rs. {{ '{:,.0f}'.format(r.security_deposit or 0) }}</div>
-                    {% else %}
-                        <div class="small text-muted">Service charge</div>
-                    {% endif %}
-                    <div class="small mt-2"><i class="bi bi-geo-alt text-primary"></i> {{ r.taluk }}, {{ r.district }}</div>
+                    <div class="fw-bold text-primary fs-5">{{ r.price_label }}</div>
+                    <div class="small text-muted">{% if r.is_equipment %}Deposit: Rs. {{ '{:,.0f}'.format(r.security_deposit or 0) }}{% else %}Service charge{% endif %}</div>
+                    <div class="small mt-2">{{ r.taluk }}, {{ r.district }}</div>
                     {% if e.distance is not none %}
-                        <div class="small fw-semibold text-deep"><i class="bi bi-signpost-2"></i> {{ e.distance }} km away</div>
+                        <div class="small fw-bold text-primary">{{ e.distance }} km away</div>
                     {% elif location_on and not r.has_coordinates %}
                         <div class="small text-muted">Distance not available</div>
                     {% endif %}
-                    <div class="small mt-1">
-                        {% if e.rating %}<i class="bi bi-star-fill text-warning"></i> {{ e.rating }} ({{ e.reviews }})
+                    <div class="small mt-2">
+                        {% if e.rating %}
+                            <span class="stars">{% for i in range(5) %}<i class="bi {{ 'bi-star-fill' if i < e.rating|round(0, 'floor')|int else ('bi-star-half' if i < e.rating else 'bi-star') }}"></i>{% endfor %}</span>
+                            <span class="text-muted ms-1">{{ e.rating }} ({{ e.reviews }})</span>
                         {% else %}<span class="text-muted">No reviews yet</span>{% endif %}
                     </div>
-                    <div class="mt-2">
+                    <div class="mt-2 d-flex align-items-center gap-2 flex-wrap">
                         {% if e.booked %}
-                            {{ status_badge('Already Booked') }}
-                            <div class="small text-danger mt-1">Booked for {{ start.strftime('%d %b') }} - {{ end.strftime('%d %b') }}</div>
+                            {{ status_badge('Already Booked') }}<span class="small text-danger">for {{ start.strftime('%d %b') }} - {{ end.strftime('%d %b') }}</span>
                         {% elif r.availability != 'Available' %}
                             {{ status_badge('Unavailable') }}
                         {% else %}
                             {{ status_badge('Available') }}
-                            {% if date_filter %}<span class="small text-success ms-1">for your dates</span>{% endif %}
                         {% endif %}
                     </div>
-                    <a href="{{ url_for('resource.detail', resource_id=r.id, **link_args) }}" class="btn btn-outline-primary w-100 mt-3">View Details</a>
+                    <div class="mt-3 d-grid gap-2">
+                        <a href="{{ url_for('resource.detail', resource_id=r.id, **link_args) }}" class="btn btn-outline-primary">View Details</a>
+                        {% if e.booked %}
+                            <button class="btn btn-secondary btn-sm" disabled>Not available for these dates</button>
+                        {% elif r.availability != 'Available' %}
+                            <button class="btn btn-secondary btn-sm" disabled>Currently unavailable</button>
+                        {% else %}
+                            <a href="{{ url_for('request.new', resource_id=r.id, **link_args) }}" class="btn btn-primary">Request</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,9 +141,7 @@
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
             {% for p in range(1, pages + 1) %}
-            <li class="page-item {{ 'active' if p == page }}">
-                <a class="page-link" href="{{ url_for('resource.browse', page=p, **page_args) }}">{{ p }}</a>
-            </li>
+            <li class="page-item {{ 'active' if p == page }}"><a class="page-link" href="{{ url_for('resource.browse', page=p, **page_args) }}">{{ p }}</a></li>
             {% endfor %}
         </ul>
     </nav>

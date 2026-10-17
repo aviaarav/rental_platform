@@ -1,0 +1,14 @@
+{# Latitude / longitude inputs plus the browser-location button. #}
+<div class="col-md-4">
+    <label class="form-label">Latitude</label>
+    <input type="text" name="latitude" class="form-control" value="{{ form.get('latitude', '') }}" placeholder="e.g. 11.0168" data-lat-input>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Longitude</label>
+    <input type="text" name="longitude" class="form-control" value="{{ form.get('longitude', '') }}" placeholder="e.g. 76.9558" data-lng-input>
+</div>
+<div class="col-md-4">
+    <label class="form-label">Pick coordinates</label>
+    <button type="button" class="btn btn-outline-primary w-100" data-use-location>Use My Current Location</button>
+</div>
+<div class="col-12"><div class="small text-muted" data-location-status>Click the button while you are at the item's location. Coordinates show the distance to people who book. You can also leave them empty.</div></div>

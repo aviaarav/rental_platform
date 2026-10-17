@@ -18,3 +18,9 @@ AVAILABILITY_OPTIONS = ['Available', 'Unavailable']
 # Booking request options
 URGENCY_OPTIONS = ['Normal', 'Urgent', 'Emergency']
 SERVICE_MODES = ['At My Location', "At Provider's Place", 'Online / Remote']
+
+# Dropdowns on the booking request forms (free text is still accepted by the server)
+EQUIPMENT_PURPOSES = ['Event / Function', 'Home repair work', 'Construction work', 'Agricultural work',
+                      'Business use', 'Personal use', 'Other']
+SERVICE_PURPOSES = ['Repair and maintenance', 'New installation', 'House wiring / Fan and light fitting',
+                    'Inspection / Consultation', 'Emergency repair', 'Regular service', 'Other']

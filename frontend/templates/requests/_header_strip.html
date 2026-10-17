@@ -1,0 +1,22 @@
+{# Summary strip above the booking form. Expects: resource #}
+<div class="summary-strip mb-3">
+    {% if resource.image_path %}
+        <img src="{{ url_for('uploads.serve', filename=resource.image_path) }}" class="thumb-lg" alt="">
+    {% else %}
+        <div class="thumb-lg"><i class="bi bi-image"></i></div>
+    {% endif %}
+    <div class="flex-grow-1">
+        <div class="fw-bold text-deep">{{ resource.name }}</div>
+        <div class="small text-muted">
+            {% if resource.is_equipment %}
+                Owner: {{ resource.owner.full_name }} &nbsp;|&nbsp; {{ resource.taluk }}, {{ resource.district }} &nbsp;|&nbsp; Condition: {{ resource.condition }}
+            {% else %}
+                {{ resource.category }} &nbsp;|&nbsp; {{ resource.experience }} yrs experience &nbsp;|&nbsp; {{ resource.taluk }} &nbsp;|&nbsp; Phone {{ resource.owner.phone }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="text-end">
+        <div class="fw-bold text-primary">{{ resource.price_label }}</div>
+        <div class="small text-muted">{% if resource.is_equipment %}Deposit Rs. {{ '{:,.0f}'.format(resource.security_deposit or 0) }}{% else %}{{ resource.charge_type }}{% endif %}</div>
+    </div>
+</div>

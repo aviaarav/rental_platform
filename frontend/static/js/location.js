@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             locate(status, function (lat, lng) {
                 if (latInput) latInput.value = lat.toFixed(6);
                 if (lngInput) lngInput.value = lng.toFixed(6);
+                if (lngInput) lngInput.dispatchEvent(new Event('input', { bubbles: true }));
                 show(status, 'Location captured.', 'text-success');
                 button.disabled = false;
                 if (button.hasAttribute('data-auto-submit') && button.form) button.form.submit();

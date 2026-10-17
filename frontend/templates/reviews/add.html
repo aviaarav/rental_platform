@@ -2,37 +2,50 @@
 {% block title %}Review {{ booking.resource.name }}{% endblock %}
 
 {% block content %}
-<div class="container py-4" style="max-width: 720px;">
-    <p class="small text-muted mb-3">
-        <a href="{{ url_for('request.sent') }}" class="text-decoration-none">Requests Sent</a> &nbsp;/&nbsp; Write Review
-    </p>
-    <div class="card p-4 shadow-sm">
-        <h4 class="fw-bold text-deep mb-1">How was "{{ booking.resource.name }}"?</h4>
-        <p class="small text-muted">
-            {{ booking.resource.resource_type }} by {{ booking.owner.full_name }} &middot;
-            {{ booking.start_date.strftime('%d %b') }} - {{ booking.end_date.strftime('%d %b %Y') }}
-        </p>
-        <form method="post" novalidate>
-            <div class="mb-3">
-                <label class="form-label d-block">Rating</label>
-                <div class="d-flex gap-3">
-                    {% for n in range(1, 6) %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="rating" id="rating{{ n }}" value="{{ n }}" {{ 'checked' if form.get('rating') == n|string }} required>
-                        <label class="form-check-label" for="rating{{ n }}">{{ n }} <i class="bi bi-star-fill text-warning"></i></label>
-                    </div>
+{% from 'partials/_status_badge.html' import status_badge %}
+<div class="container py-4" style="max-width: 640px;">
+    <div class="card p-4 shadow-sm text-center">
+        <h3 class="page-title mb-1">Rate and Review</h3>
+        <div class="small text-muted">Booking #{{ booking.id }} &nbsp;-&nbsp; {{ booking.resource.name }}</div>
+        <div class="mt-2 mb-3">{{ status_badge(booking.status) }}</div>
+        {% if booking.resource.image_path %}
+            <img src="{{ url_for('uploads.serve', filename=booking.resource.image_path) }}" class="mx-auto rounded-3" style="width:170px;height:90px;object-fit:cover;" alt="">
+        {% else %}
+            <div class="img-placeholder mx-auto rounded-3" style="width:170px;height:90px;font-size:2rem;"><i class="bi bi-image"></i></div>
+        {% endif %}
+
+        <form method="post" novalidate class="text-start mt-4">
+            <div class="text-center mb-3">
+                <label class="form-label d-block">Your Rating</label>
+                <div class="star-rating" data-star-rating>
+                    {% for n in [5, 4, 3, 2, 1] %}
+                    <input type="radio" name="rating" id="rating{{ n }}" value="{{ n }}" {{ 'checked' if form.get('rating') == n|string }} required>
+                    <label for="rating{{ n }}" title="{{ n }} out of 5"><i class="bi bi-star-fill"></i></label>
                     {% endfor %}
                 </div>
+                <div class="small text-muted" data-rating-text>{{ form.get('rating') ~ ' out of 5' if form.get('rating') else 'Tap a star' }}</div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Comment <span class="text-muted small">(optional, up to 500 characters)</span></label>
-                <textarea name="comment" class="form-control" rows="4" maxlength="500">{{ form.get('comment', '') }}</textarea>
+                <label class="form-label">Your Review</label>
+                <textarea name="comment" class="form-control" rows="4" maxlength="500" placeholder="How did it go?">{{ form.get('comment', '') }}</textarea>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-primary px-4">Submit Review</button>
-                <a class="btn btn-outline-primary" href="{{ url_for('request.sent') }}">Cancel</a>
+                <button class="btn btn-primary btn-lg flex-grow-1">Submit Review</button>
+                <a class="btn btn-outline-primary btn-lg flex-grow-1" href="{{ url_for('request.sent') }}">Cancel</a>
             </div>
         </form>
+        <div class="small text-muted mt-3">One review per completed booking. Rating must be 1 to 5.</div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('[data-star-rating] input').forEach(function (input) {
+    input.addEventListener('change', function () {
+        var text = document.querySelector('[data-rating-text]');
+        if (text) text.textContent = input.value + ' out of 5';
+    });
+});
+</script>
 {% endblock %}

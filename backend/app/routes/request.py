@@ -13,13 +13,13 @@ from app.constants import (
     STATUS_REJECTED,
     STATUS_RETURNED,
 )
-from app.data.categories import PICKUP_METHODS, SERVICE_MODES, URGENCY_OPTIONS
+from app.data.categories import EQUIPMENT_PURPOSES, PICKUP_METHODS, SERVICE_MODES, SERVICE_PURPOSES, URGENCY_OPTIONS
 from app.data.tn_locations import DISTRICTS, is_valid_location
 from app.extensions import db
 from app.models import BookingRequest, Resource
 from app.services.booking import has_conflict, validate_dates
 from app.services.notify import create_notification, log_activity
-from app.utils.geo import is_valid_pair
+from app.utils.geo import is_valid_pair, route_points
 
 request_bp = Blueprint('request', __name__, url_prefix='/requests')
 
@@ -38,8 +38,9 @@ TRANSITIONS = {
 
 
 def _form_options():
-    return dict(districts=DISTRICTS, pickup_methods=PICKUP_METHODS,
-                service_modes=SERVICE_MODES, urgency_options=URGENCY_OPTIONS)
+    return {'districts': DISTRICTS, 'pickup_methods': PICKUP_METHODS, 'service_modes': SERVICE_MODES,
+            'urgency_options': URGENCY_OPTIONS, 'equipment_purposes': EQUIPMENT_PURPOSES,
+            'service_purposes': SERVICE_PURPOSES}
 
 
 def _dates(booking):
@@ -127,7 +128,8 @@ def new(resource_id):
         if errors:
             for message in errors:
                 flash(message, 'danger')
-            return render_template(template, resource=resource, form=request.form, **_form_options())
+            return render_template(template, resource=resource, form=request.form, dates_free=None,
+                                   **_form_options())
 
         booking = BookingRequest(resource_id=resource.id, borrower_id=current_user.id,
                                  owner_id=resource.owner_id, status=STATUS_PENDING, **data)
@@ -147,7 +149,10 @@ def new(resource_id):
         'address': current_user.address,
         'borrower_latitude': request.args.get('lat', ''), 'borrower_longitude': request.args.get('lng', ''),
     }
-    return render_template(template, resource=resource, form=form, **_form_options())
+    # When the dates came from the detail / browse page, say up front whether they are free.
+    start, end, _ = validate_dates(form['start_date'], form['end_date'])
+    dates_free = (not has_conflict(resource.id, start, end)) if start and end else None
+    return render_template(template, resource=resource, form=form, dates_free=dates_free, **_form_options())
 
 
 @request_bp.route('/sent')
@@ -178,7 +183,14 @@ def received():
         status = ''
 
     bookings = query.order_by(BookingRequest.created_at.desc()).all()
-    return render_template('requests/received.html', bookings=bookings, resource=resource,
+    rows = []
+    for booking in bookings:
+        points = None
+        if booking.distance_km is not None:
+            points = route_points(booking.borrower_latitude, booking.borrower_longitude,
+                                  booking.resource.latitude, booking.resource.longitude)
+        rows.append({'b': booking, 'points': points})
+    return render_template('requests/received.html', rows=rows, resource=resource,
                            status=status, status_filters=STATUS_FILTERS)
 
 

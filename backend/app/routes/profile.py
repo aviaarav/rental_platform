@@ -44,7 +44,8 @@ def index():
         if errors:
             for message in errors:
                 flash(message, 'danger')
-            return render_template('profile.html', districts=DISTRICTS, form=f, stats=_stats(current_user))
+            return render_template('profile.html', districts=DISTRICTS, form=f, stats=_stats(current_user),
+                                   editing=True)
 
         current_user.full_name = full_name
         current_user.phone = phone
@@ -57,7 +58,7 @@ def index():
         return redirect(url_for('profile.index'))
 
     return render_template('profile.html', districts=DISTRICTS, form=_form_from(current_user),
-                           stats=_stats(current_user))
+                           stats=_stats(current_user), editing=request.args.get('edit') == '1')
 
 
 @profile_bp.route('/password', methods=['POST'])

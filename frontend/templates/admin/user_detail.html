@@ -5,8 +5,8 @@
 {% block content %}
 {% from 'partials/_status_badge.html' import status_badge %}
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h4 class="fw-bold text-deep mb-0">{{ user.full_name }}
-        {% if user.is_blocked %}<span class="badge-status status-blocked ms-2">Blocked</span>{% else %}<span class="badge-status status-available ms-2">Active</span>{% endif %}
+    <h4 class="page-title mb-0">{{ user.full_name }}
+        {% if user.is_blocked %}<span class="badge-status status-blocked ms-2">Blocked</span>{% else %}<span class="badge-status status-active ms-2">Active</span>{% endif %}
     </h4>
     <div class="d-flex gap-2">
         <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary btn-sm">Back to Users</a>
