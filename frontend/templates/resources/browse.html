@@ -94,7 +94,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 resource-card">
                 {% if r.image_path %}
-                    <img src="{{ url_for('static', filename=r.image_path) }}" class="card-img-top" alt="{{ r.name }}">
+                    <img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="card-img-top" alt="{{ r.name }}">
                 {% else %}
                     <div class="img-placeholder"><i class="bi bi-image"></i></div>
                 {% endif %}

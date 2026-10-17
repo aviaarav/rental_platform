@@ -5,11 +5,11 @@ import uuid
 from flask import current_app
 from werkzeug.utils import secure_filename
 
-from app.models import TYPE_EQUIPMENT
+from app.constants import TYPE_EQUIPMENT
 
 
 def folder_for(resource_type):
-    """Sub-folder of static/uploads used for a resource type."""
+    """Sub-folder of UPLOAD_FOLDER used for a resource type."""
     return 'equipment' if resource_type == TYPE_EQUIPMENT else 'professional'
 
 

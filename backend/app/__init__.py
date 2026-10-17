@@ -4,12 +4,16 @@ Run the dev server from backend/ with:
     flask --app app run --debug
 or:
     python run.py
+
+First-time setup (also from backend/):
+    flask --app app db upgrade      # create / migrate the database
+    flask --app app seed-admin      # create the default administrator
 """
 from flask import Flask, flash, redirect, request, url_for
 from flask_login import current_user, logout_user
 
 from app.config import FRONTEND_DIR, get_config
-from app.extensions import db, login_manager
+from app.extensions import db, login_manager, migrate
 
 
 def create_app(config=None):
@@ -25,10 +29,18 @@ def create_app(config=None):
     app.config.from_object(config or get_config())
 
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
+
+    # Importing the package registers every table with SQLAlchemy (needed by
+    # Flask-Migrate) and the Flask-Login user loader.
+    from app import models  # noqa: F401
 
     from app.routes import register_blueprints
     register_blueprints(app)
+
+    from app.cli import register_commands
+    register_commands(app)
 
     @app.before_request
     def stop_blocked_users():
@@ -41,22 +53,4 @@ def create_app(config=None):
             return redirect(url_for('main.home'))
         return None
 
-    with app.app_context():
-        db.create_all()
-        seed_admin(app.config['ADMIN_EMAIL'], app.config['ADMIN_PASSWORD'])
-
     return app
-
-
-def seed_admin(email, password):
-    """Create the default administrator once."""
-    from app.models import User
-
-    if User.query.filter_by(email=email).first():
-        return
-    admin = User(full_name='Administrator', email=email, phone='0000000000',
-                 district='Coimbatore', taluk='Coimbatore North', address='Admin Office', role='admin')
-    admin.set_password(password)
-    db.session.add(admin)
-    db.session.commit()
-    print(f'Default admin created: {email} / {password}  (change this password later)')

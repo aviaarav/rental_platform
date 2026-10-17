@@ -8,11 +8,12 @@ from app.data.categories import (AVAILABILITY_OPTIONS, CHARGE_TYPES, CONDITIONS,
                              EQUIPMENT_CATEGORIES, PICKUP_METHODS, SERVICE_CATEGORIES)
 from app.data.tn_locations import DISTRICTS, is_valid_location
 from app.extensions import db
-from app.models import TYPE_EQUIPMENT, TYPE_PROFESSIONAL, Resource
-from app.utils.booking import booked_resource_ids, has_conflict, upcoming_booked_periods, validate_dates
+from app.constants import TYPE_EQUIPMENT, TYPE_PROFESSIONAL
+from app.models import Resource
+from app.services.booking import booked_resource_ids, has_conflict, upcoming_booked_periods, validate_dates
 from app.utils.geo import haversine_km, is_valid_pair, parse_coordinate, route_points
-from app.utils.notify import log_activity
-from app.utils.uploads import delete_image, folder_for, save_image
+from app.services.notify import log_activity
+from app.services.uploads import delete_image, folder_for, save_image
 
 resource_bp = Blueprint('resource', __name__, url_prefix='/resources')
 

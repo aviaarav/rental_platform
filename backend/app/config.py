@@ -28,10 +28,10 @@ class BaseConfig:
 
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024                # 5 MB uploads
     ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
-    # Phase 2 keeps user uploads under frontend/static/uploads (gitignored) so the
-    # existing url_for('static', ...) references keep working. Phase 3 moves them
-    # to backend/instance/uploads behind a dedicated route.
-    UPLOAD_FOLDER = str(FRONTEND_DIR / 'static' / 'uploads')
+    # User uploads are runtime data, not frontend source: they live in
+    # backend/instance/uploads (gitignored) and are served by the uploads
+    # blueprint at /uploads/<path>. Overridable for deployments.
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', str(BACKEND_DIR / 'instance' / 'uploads'))
 
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@rentserve.in')
     ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin@123')

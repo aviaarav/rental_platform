@@ -8,7 +8,8 @@ from datetime import date, datetime
 
 from sqlalchemy import func
 
-from app.models import BLOCKING_STATUSES, BookingRequest
+from app.constants import BLOCKING_STATUSES
+from app.models import BookingRequest
 
 
 def parse_date(value):

@@ -1,7 +1,7 @@
 # Backend / Frontend folder split (keep Jinja)
 
 Date: 2026-10-17
-Status: phase 1 and 2 applied (branches refactor/phase-1-hygiene, refactor/phase-2-split)
+Status: phases 1 to 3 applied (branches refactor/phase-1-hygiene, refactor/phase-2-split, refactor/phase-3-services)
 
 ## Goal
 
@@ -56,7 +56,6 @@ rental_platform/                      # repo root
 │   │   ├── rental.db
 │   │   └── uploads/                  # user-uploaded images (moved out of static/)
 │   ├── migrations/                   # Flask-Migrate, phase 3
-│   ├── scripts/
 │   └── tests/
 │       ├── conftest.py
 │       ├── test_auth.py
@@ -155,6 +154,7 @@ pytest                              # tests use TestingConfig + in-memory sqlite
 - Split `models.py` into `models/`; extract `constants.py`.
 - Move `utils/booking.py`, `utils/notify.py`, `utils/uploads.py` to `services/`.
 - Replace `seed_admin()` on boot and `check_users.py` with commands in `cli.py`.
+  (`backend/scripts/` dropped; `flask check-users` replaces the script.)
 - Add Flask-Migrate; initial migration replaces `db.create_all()`.
 
 ### Phase 4: fill and test

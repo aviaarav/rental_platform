@@ -28,7 +28,7 @@
                     <tr>
                         <td>
                             {% if r.image_path %}
-                                <img src="{{ url_for('static', filename=r.image_path) }}" class="thumb" alt="">
+                                <img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="thumb" alt="">
                             {% else %}
                                 <div class="thumb d-flex align-items-center justify-content-center text-primary"><i class="bi bi-image"></i></div>
                             {% endif %}
