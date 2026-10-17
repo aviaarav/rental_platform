@@ -29,10 +29,14 @@ body {
 .text-muted { color: var(--rs-muted) !important; }
 
 /* ---------- navbar and footer ---------- */
-.navbar-rs { background: var(--rs-blue); padding-top: .55rem; padding-bottom: .55rem; }
+.navbar-rs {
+    background: var(--rs-blue); padding-top: .55rem; padding-bottom: .55rem;
+    --bs-navbar-color: #fff; --bs-navbar-hover-color: #fff; --bs-navbar-active-color: #fff;
+    --bs-navbar-brand-color: #fff; --bs-navbar-brand-hover-color: #fff;
+}
 .navbar-rs .nav-link { color: #fff; opacity: .92; padding: .4rem .85rem; border-radius: 50rem; }
 .navbar-rs .nav-link:hover { opacity: 1; }
-.navbar-rs .nav-link.active { opacity: 1; font-weight: 600; background: var(--rs-navy); }
+.navbar-rs .nav-link.active { opacity: 1; font-weight: 600; background: var(--rs-navy); color: #fff; }
 .navbar-rs .dropdown-menu { border-color: var(--rs-border); border-radius: 10px; }
 
 .brand-circle {
