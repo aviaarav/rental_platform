@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, flash, redirect, request, url_for
 from flask_login import current_user, logout_user
 
@@ -7,14 +8,18 @@ from extensions import db, login_manager
 from models import User
 from routes import register_blueprints
 
-ADMIN_EMAIL = 'admin@rentserve.in'
-ADMIN_PASSWORD = 'Admin@123'
+# Load ../.env (see .env.example at the repo root). Values already in the
+# environment take precedence over the file.
+load_dotenv()
+
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@rentserve.in')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin@123')
 
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change-this-secret-key-before-deployment')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rental.db'   # saved in the instance/ folder
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///rental.db')  # relative sqlite paths live in instance/
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024               # 5 MB uploads
