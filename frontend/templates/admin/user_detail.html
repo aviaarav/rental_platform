@@ -1,0 +1,90 @@
+{% extends 'base_admin.html' %}
+{% block title %}{{ user.full_name }}{% endblock %}
+{% block crumb %}<a href="{{ url_for('admin.users') }}" class="text-decoration-none">Users</a> / {{ user.full_name }}{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h4 class="fw-bold text-deep mb-0">{{ user.full_name }}
+        {% if user.is_blocked %}<span class="badge-status status-blocked ms-2">Blocked</span>{% else %}<span class="badge-status status-available ms-2">Active</span>{% endif %}
+    </h4>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-outline-primary btn-sm">Back to Users</a>
+        {% if user.is_blocked %}
+        <form method="post" action="{{ url_for('admin.set_blocked', user_id=user.id, action='unblock') }}"><button class="btn btn-success btn-sm">Unblock User</button></form>
+        {% else %}
+        <form method="post" action="{{ url_for('admin.set_blocked', user_id=user.id, action='block') }}" onsubmit="return confirm('Block this user? They will be logged out immediately.');"><button class="btn btn-danger btn-sm">Block User</button></form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold text-deep">Details</h6>
+            <div class="small profile-lines">
+                <div><span class="text-muted">Email</span><strong>{{ user.email }}</strong></div>
+                <div><span class="text-muted">Phone</span><strong>{{ user.phone }}</strong></div>
+                <div><span class="text-muted">District</span><strong>{{ user.district }}</strong></div>
+                <div><span class="text-muted">Taluk</span><strong>{{ user.taluk }}</strong></div>
+                <div><span class="text-muted">Address</span><strong>{{ user.address }}</strong></div>
+                <div><span class="text-muted">Joined</span><strong>{{ user.created_at.strftime('%d %b %Y') }}</strong></div>
+            </div>
+        </div>
+        <div class="card p-3">
+            <h6 class="fw-bold text-deep">Recent Activity</h6>
+            {% if logs %}
+            <ul class="list-unstyled small mb-0">
+            {% for log in logs %}
+                <li class="py-1 {{ 'border-bottom' if not loop.last }}"><span class="fw-semibold">{{ log.action }}</span>{% if log.details %} <span class="text-muted">&middot; {{ log.details }}</span>{% endif %}<div class="text-muted">{{ log.created_at.strftime('%d %b %Y, %H:%M') }}</div></li>
+            {% endfor %}
+            </ul>
+            {% else %}<p class="small text-muted mb-0">No activity recorded.</p>{% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold text-deep">Listings ({{ listings|length }})</h6>
+            {% if listings %}
+            <div class="table-responsive"><table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Name</th><th>Type</th><th>Price</th><th>Availability</th><th>Visibility</th><th></th></tr></thead>
+                <tbody>
+                {% for r in listings %}
+                <tr>
+                    <td>{{ r.name }}</td>
+                    <td><span class="badge {{ 'text-bg-primary' if r.is_equipment else 'bg-navy' }}">{{ r.resource_type }}</span></td>
+                    <td class="small">{{ r.price_label }}</td>
+                    <td>{{ status_badge(r.availability) }}</td>
+                    <td>{% if r.is_hidden %}<span class="badge-status status-hidden">Hidden</span>{% else %}<span class="small text-muted">Visible</span>{% endif %}</td>
+                    <td class="text-end"><a href="{{ url_for('admin.resources', q=r.name) }}" class="btn btn-outline-primary btn-sm">Manage</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table></div>
+            {% else %}<p class="small text-muted mb-0">No listings.</p>{% endif %}
+        </div>
+
+        {% for title, rows, other_label in [('Bookings Sent', bookings_made, 'Owner'), ('Bookings Received', bookings_received, 'Borrower')] %}
+        <div class="card p-3 mb-3">
+            <h6 class="fw-bold text-deep">{{ title }} (latest {{ rows|length }})</h6>
+            {% if rows %}
+            <div class="table-responsive"><table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Resource</th><th>{{ other_label }}</th><th>Dates</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for b in rows %}
+                <tr>
+                    <td>{{ b.resource.name }}</td>
+                    <td>{% set other = b.owner if other_label == 'Owner' else b.borrower %}<a href="{{ url_for('admin.user_detail', user_id=other.id) }}">{{ other.full_name }}</a></td>
+                    <td class="small">{{ b.start_date.strftime('%d %b') }} - {{ b.end_date.strftime('%d %b %Y') }}</td>
+                    <td>{{ status_badge(b.status) }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table></div>
+            {% else %}<p class="small text-muted mb-0">None.</p>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

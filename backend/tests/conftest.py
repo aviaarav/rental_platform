@@ -2,10 +2,12 @@
 from datetime import date, timedelta
 
 import pytest
+from flask import g
+from flask.testing import FlaskClient
 
 from app import create_app
 from app.config import TestingConfig
-from app.constants import ROLE_USER, TYPE_EQUIPMENT, TYPE_PROFESSIONAL
+from app.constants import ROLE_ADMIN, ROLE_USER, TYPE_EQUIPMENT, TYPE_PROFESSIONAL
 from app.extensions import db as _db
 from app.models import Resource, User
 
@@ -13,10 +15,26 @@ PASSWORD = 'secret123'
 DISTRICT, TALUK = 'Coimbatore', 'Coimbatore North'
 
 
+class Client(FlaskClient):
+    """Test client that behaves like a separate browser.
+
+    The `app` fixture keeps one app context open for the whole test so tests can
+    query the database directly. Flask-Login caches the loaded user on `g`, which
+    lives in that context, so without this two clients in one test would share a
+    login. Clearing the cache before every request (redirect hops included) makes
+    each request load the user from its own session cookie, as in production.
+    """
+
+    def open(self, *args, **kwargs):
+        g.pop('_login_user', None)
+        return super().open(*args, **kwargs)
+
+
 @pytest.fixture
 def app(tmp_path):
     app = create_app(TestingConfig)
     app.config['UPLOAD_FOLDER'] = str(tmp_path / 'uploads')
+    app.test_client_class = Client
     with app.app_context():
         _db.create_all()
         yield app
@@ -105,3 +123,17 @@ def service_request_form(start_days=3, end_days=3, **overrides):
     }
     form.update(overrides)
     return form
+
+
+@pytest.fixture
+def admin(app):
+    user = User(full_name='Administrator', email='admin@example.com', phone='0000000000', district=DISTRICT,
+                taluk=TALUK, address='Admin Office', role=ROLE_ADMIN)
+    user.set_password(PASSWORD)
+    _db.session.add(user)
+    _db.session.commit()
+    return user
+
+
+def admin_login(client, admin, password=PASSWORD):
+    return client.post('/auth/admin-login', data={'email': admin.email, 'password': password}, follow_redirects=True)

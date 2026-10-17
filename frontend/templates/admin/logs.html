@@ -1,0 +1,38 @@
+{% extends 'base_admin.html' %}
+{% block title %}Activity Logs{% endblock %}
+{% block crumb %}Activity Logs{% endblock %}
+
+{% block content %}
+{% from 'admin/_pagination.html' import paginate %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h4 class="fw-bold text-deep mb-0">Activity Logs</h4>
+    <form method="get" class="d-flex gap-2">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Action or details" value="{{ q }}">
+        <button class="btn btn-primary btn-sm">Search</button>
+        {% if q %}<a href="{{ url_for('admin.logs') }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
+    </form>
+</div>
+
+{% if logs %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+            <thead><tr><th>When</th><th>Action</th><th>Details</th><th>By</th></tr></thead>
+            <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td class="small text-muted text-nowrap">{{ log.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+                    <td class="fw-semibold">{{ log.action }}</td>
+                    <td class="small">{{ log.details or '' }}</td>
+                    <td class="small">{% if log.actor %}{% if log.actor.is_admin %}{{ log.actor.full_name }} <span class="text-muted">(admin)</span>{% else %}<a href="{{ url_for('admin.user_detail', user_id=log.actor.id) }}">{{ log.actor.full_name }}</a>{% endif %}{% else %}<span class="text-muted">System</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ paginate(pagination, 'admin.logs', page_args) }}
+{% else %}
+<div class="card p-5 text-center"><div class="display-5 text-primary mb-2"><i class="bi bi-clock-history"></i></div><h5 class="fw-bold text-deep">No activity {{ 'matches that search' if q else 'yet' }}</h5></div>
+{% endif %}
+{% endblock %}

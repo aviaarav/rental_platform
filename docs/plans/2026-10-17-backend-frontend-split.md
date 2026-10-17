@@ -1,7 +1,7 @@
 # Backend / Frontend folder split (keep Jinja)
 
 Date: 2026-10-17
-Status: all four phases applied (branches refactor/phase-1-hygiene .. refactor/phase-4-features, each stacked on the previous)
+Status: all phases applied, including the follow-on phase 5 (branches refactor/phase-1-hygiene .. refactor/phase-5-admin, each stacked on the previous)
 
 ## Goal
 
@@ -167,9 +167,19 @@ pytest                              # tests use TestingConfig + in-memory sqlite
   listing) and tests for auth, booking requests and status transitions, reviews,
   notifications and profile. `pytest.ini` sets `pythonpath = .`; `pyproject.toml`
   configures ruff.
-- Not done: the admin pages (`admin/users.html`, `bookings.html`, `resources.html`,
-  `logs.html`, `user_detail.html`) are still empty files and the admin sidebar
-  links still point to `#`. That is a separate stage.
+### Phase 5: admin area (added after the original plan)
+- `routes/admin.py`: dashboard with counts and recent activity; users list with
+  search and block / unblock; user detail (listings, bookings, activity);
+  resources list with search and hide / unhide (owner notified); bookings list
+  by status; activity log search. All lists paginate via a shared macro in
+  `admin/_pagination.html`. Admin accounts cannot be managed from the UI.
+- The admin sidebar links now point at these pages. `partials/_navbar_admin.html`
+  was an empty, unused file and was removed.
+- `tests/test_admin.py` covers access control, every page with data, block ->
+  forced logout -> unblock, hide -> gone from browse -> unhide, filters and
+  pagination. `tests/conftest.py` gained an `admin` fixture and a test client
+  that clears Flask-Login's per-context user cache before each request, so two
+  clients in one test behave like two browsers.
 
 ## Deliberately not done
 - No JSON API, no React/Vue. Jinja stays. A future SPA can still live in `frontend/`

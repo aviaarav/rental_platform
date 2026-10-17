@@ -1,0 +1,51 @@
+{% extends 'base_admin.html' %}
+{% block title %}Bookings{% endblock %}
+{% block crumb %}Bookings{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+{% from 'admin/_pagination.html' import paginate %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h4 class="fw-bold text-deep mb-0">Bookings</h4>
+    <form method="get" class="d-flex gap-2">
+        {% if status %}<input type="hidden" name="status" value="{{ status }}">{% endif %}
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Resource name" value="{{ q }}">
+        <button class="btn btn-primary btn-sm">Search</button>
+        {% if q %}<a href="{{ url_for('admin.bookings', status=status or None) }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
+    </form>
+</div>
+
+<div class="d-flex flex-wrap gap-1 mb-3">
+    <a href="{{ url_for('admin.bookings', q=q or None) }}" class="btn btn-sm {{ 'btn-primary' if not status else 'btn-outline-primary' }}">All</a>
+    {% for s in statuses %}
+    <a href="{{ url_for('admin.bookings', status=s|lower, q=q or None) }}" class="btn btn-sm {{ 'btn-primary' if status == s|lower else 'btn-outline-primary' }}">{{ s }} <span class="badge text-bg-light">{{ counts[s] }}</span></a>
+    {% endfor %}
+</div>
+
+{% if bookings %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>#</th><th>Resource</th><th>Borrower</th><th>Owner</th><th>Dates</th><th>Purpose</th><th>Status</th><th>Requested</th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+                <tr>
+                    <td class="text-muted small">{{ b.id }}</td>
+                    <td><div class="fw-semibold">{{ b.resource.name }}</div><div class="small text-muted">{{ b.resource.resource_type }}</div></td>
+                    <td class="small"><a href="{{ url_for('admin.user_detail', user_id=b.borrower_id) }}">{{ b.borrower.full_name }}</a><div class="text-muted">{{ b.request_taluk }}, {{ b.request_district }}</div></td>
+                    <td class="small"><a href="{{ url_for('admin.user_detail', user_id=b.owner_id) }}">{{ b.owner.full_name }}</a></td>
+                    <td class="small">{{ b.start_date.strftime('%d %b') }} - {{ b.end_date.strftime('%d %b %Y') }}<div class="text-muted">{{ b.service_time }}{% if b.return_time %} to {{ b.return_time }}{% endif %}</div></td>
+                    <td class="small">{{ b.purpose }}<div class="text-muted">{{ b.pickup_method }}</div></td>
+                    <td>{{ status_badge(b.status) }}{% if b.review %}<div class="small text-muted"><i class="bi bi-star-fill text-warning"></i> {{ b.review.rating }}/5</div>{% endif %}</td>
+                    <td class="small text-muted">{{ b.created_at.strftime('%d %b %Y') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ paginate(pagination, 'admin.bookings', page_args) }}
+{% else %}
+<div class="card p-5 text-center"><div class="display-5 text-primary mb-2"><i class="bi bi-journal-check"></i></div><h5 class="fw-bold text-deep">No bookings {{ 'with this status' if status else 'yet' }}</h5></div>
+{% endif %}
+{% endblock %}

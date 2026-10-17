@@ -14,11 +14,10 @@
         <div class="fw-bold fs-5 text-white mb-4"><i class="bi bi-box-seam me-1"></i> RentServe Admin</div>
         <ul class="nav nav-pills flex-column gap-1 mb-auto">
             <li><a class="nav-link {{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-            <!-- Connected in Stage 6 -->
-            <li><a class="nav-link" href="#"><i class="bi bi-people me-2"></i>Users</a></li>
-            <li><a class="nav-link" href="#"><i class="bi bi-tools me-2"></i>Resources</a></li>
-            <li><a class="nav-link" href="#"><i class="bi bi-journal-check me-2"></i>Bookings</a></li>
-            <li><a class="nav-link" href="#"><i class="bi bi-clock-history me-2"></i>Activity Logs</a></li>
+            <li><a class="nav-link {{ 'active' if request.endpoint in ('admin.users', 'admin.user_detail') }}" href="{{ url_for('admin.users') }}"><i class="bi bi-people me-2"></i>Users</a></li>
+            <li><a class="nav-link {{ 'active' if request.endpoint == 'admin.resources' }}" href="{{ url_for('admin.resources') }}"><i class="bi bi-tools me-2"></i>Resources</a></li>
+            <li><a class="nav-link {{ 'active' if request.endpoint == 'admin.bookings' }}" href="{{ url_for('admin.bookings') }}"><i class="bi bi-journal-check me-2"></i>Bookings</a></li>
+            <li><a class="nav-link {{ 'active' if request.endpoint == 'admin.logs' }}" href="{{ url_for('admin.logs') }}"><i class="bi bi-clock-history me-2"></i>Activity Logs</a></li>
         </ul>
         <a class="nav-link text-white mt-3" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a>
     </aside>

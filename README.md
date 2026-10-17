@@ -55,7 +55,11 @@ Open http://127.0.0.1:5000.
 - After a booking is returned, the borrower can leave one review; ratings show on the listing.
 - Every booking change creates an in-app notification. The navbar badge and popup toasts
   poll `/notifications/unread.json` every 30 seconds.
-- Admins have a separate login and dashboard.
+- Admins have a separate login and dashboard with counts of users, listings and bookings
+  by status, recent bookings and activity. They can search users and block / unblock them
+  (a blocked user is logged out on their next request), search listings and hide / unhide
+  them (hidden listings disappear from browse for everyone but the owner, who is notified),
+  browse all bookings by status, and search the activity log.
 
 ## Tests and lint
 

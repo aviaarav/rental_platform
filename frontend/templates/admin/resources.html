@@ -1,0 +1,69 @@
+{% extends 'base_admin.html' %}
+{% block title %}Resources{% endblock %}
+{% block crumb %}Resources{% endblock %}
+
+{% block content %}
+{% from 'partials/_status_badge.html' import status_badge %}
+{% from 'admin/_pagination.html' import paginate %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h4 class="fw-bold text-deep mb-0">Resources</h4>
+    <form method="get" class="d-flex flex-wrap gap-2">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Name, category or owner" value="{{ q }}">
+        <select name="type" class="form-select form-select-sm" style="width: auto;">
+            <option value="" {{ 'selected' if not rtype }}>All types</option>
+            <option value="{{ type_equipment }}" {{ 'selected' if rtype == type_equipment }}>Equipment</option>
+            <option value="{{ type_professional }}" {{ 'selected' if rtype == type_professional }}>Professional</option>
+        </select>
+        <select name="visibility" class="form-select form-select-sm" style="width: auto;">
+            <option value="" {{ 'selected' if not visibility }}>Visible and hidden</option>
+            <option value="visible" {{ 'selected' if visibility == 'visible' }}>Visible</option>
+            <option value="hidden" {{ 'selected' if visibility == 'hidden' }}>Hidden</option>
+        </select>
+        <button class="btn btn-primary btn-sm">Filter</button>
+        {% if q or rtype or visibility %}<a href="{{ url_for('admin.resources') }}" class="btn btn-outline-primary btn-sm">Reset</a>{% endif %}
+    </form>
+</div>
+
+{% if resources %}
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Listing</th><th>Owner</th><th>Type</th><th>Price</th><th>Location</th><th>Availability</th><th>Bookings</th><th>Visibility</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for r in resources %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if r.image_path %}<img src="{{ url_for('uploads.serve', filename=r.image_path) }}" class="thumb" alt="">{% else %}<div class="thumb d-flex align-items-center justify-content-center text-primary"><i class="bi bi-image"></i></div>{% endif %}
+                            <div><div class="fw-semibold">{{ r.name }}</div><div class="small text-muted">{{ r.category }}</div></div>
+                        </div>
+                    </td>
+                    <td class="small"><a href="{{ url_for('admin.user_detail', user_id=r.owner_id) }}">{{ r.owner.full_name }}</a></td>
+                    <td><span class="badge {{ 'text-bg-primary' if r.is_equipment else 'bg-navy' }}">{{ r.resource_type }}</span></td>
+                    <td class="small">{{ r.price_label }}</td>
+                    <td class="small">{{ r.taluk }}, {{ r.district }}</td>
+                    <td>{{ status_badge(r.availability) }}</td>
+                    <td>{{ r.bookings.count() }}</td>
+                    <td>{% if r.is_hidden %}<span class="badge-status status-hidden">Hidden</span>{% else %}<span class="small text-muted">Visible</span>{% endif %}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{{ url_for('resource.detail', resource_id=r.id) }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener">View</a>
+                            {% if r.is_hidden %}
+                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='unhide') }}"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-success btn-sm">Unhide</button></form>
+                            {% else %}
+                            <form method="post" action="{{ url_for('admin.set_hidden', resource_id=r.id, action='hide') }}" onsubmit="return confirm('Hide this listing from other users?');"><input type="hidden" name="next" value="{{ request.full_path }}"><button class="btn btn-outline-danger btn-sm">Hide</button></form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ paginate(pagination, 'admin.resources', page_args) }}
+<p class="small text-muted mt-3">Hiding a listing removes it from browse and search for other users; the owner can still see and edit it, and is notified.</p>
+{% else %}
+<div class="card p-5 text-center"><div class="display-5 text-primary mb-2"><i class="bi bi-tools"></i></div><h5 class="fw-bold text-deep">No listings found</h5><p class="text-muted mb-0">Try different filters.</p></div>
+{% endif %}
+{% endblock %}
