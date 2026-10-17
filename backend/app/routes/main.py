@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request
 
-from data.tn_locations import get_taluks
+from app.data.tn_locations import get_taluks
 
 main_bp = Blueprint('main', __name__)
 

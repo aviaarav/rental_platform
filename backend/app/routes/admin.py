@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 
-from models import User
-from utils.decorators import admin_required
+from app.models import User
+from app.utils.decorators import admin_required
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 

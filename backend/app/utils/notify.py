@@ -1,6 +1,6 @@
 """Helpers for activity logs and popup notifications."""
-from extensions import db
-from models import ActivityLog, Notification
+from app.extensions import db
+from app.models import ActivityLog, Notification
 
 
 def log_activity(action, details='', user_id=None, commit=True):

@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from extensions import db, login_manager
-from utils.geo import haversine_km, is_valid_pair
+from app.extensions import db, login_manager
+from app.utils.geo import haversine_km, is_valid_pair
 
 # ---------- constants ----------
 ROLE_USER = 'user'

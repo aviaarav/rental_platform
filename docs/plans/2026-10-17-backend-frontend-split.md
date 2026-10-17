@@ -1,7 +1,7 @@
 # Backend / Frontend folder split (keep Jinja)
 
 Date: 2026-10-17
-Status: plan, not applied
+Status: phase 1 and 2 applied (branches refactor/phase-1-hygiene, refactor/phase-2-split)
 
 ## Goal
 
@@ -19,12 +19,12 @@ rental_platform/                      # repo root
 ├── backend/                          # everything Python; deployable on its own
 │   ├── requirements.txt
 │   ├── requirements-dev.txt          # pytest, ruff
-│   ├── config.py                     # Base / Development / Production / Testing
 │   ├── run.py                        # dev entry: create_app().run(debug=True)
 │   ├── wsgi.py                       # gunicorn entry: app = create_app()
 │   │
 │   ├── app/                          # the Flask package
 │   │   ├── __init__.py               # create_app(); points Flask at ../frontend
+│   │   ├── config.py                 # Base / Development / Production / Testing (inside the package so imports never depend on cwd)
 │   │   ├── extensions.py             # db, login_manager
 │   │   ├── constants.py              # ROLE_*, TYPE_*, status strings
 │   │   ├── cli.py                    # flask seed-admin, flask check-users
@@ -75,7 +75,7 @@ rental_platform/                      # repo root
 
 ## How Flask finds the frontend
 
-`backend/app/__init__.py`:
+`backend/app/config.py` resolves the paths; `backend/app/__init__.py` uses them:
 
 ```python
 from pathlib import Path

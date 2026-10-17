@@ -3,10 +3,10 @@ import re
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
-from data.tn_locations import DISTRICTS, is_valid_location
-from extensions import db
-from models import ROLE_USER, User
-from utils.notify import log_activity
+from app.data.tn_locations import DISTRICTS, is_valid_location
+from app.extensions import db
+from app.models import ROLE_USER, User
+from app.utils.notify import log_activity
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 

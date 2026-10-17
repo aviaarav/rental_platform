@@ -5,7 +5,7 @@ import uuid
 from flask import current_app
 from werkzeug.utils import secure_filename
 
-from models import TYPE_EQUIPMENT
+from app.models import TYPE_EQUIPMENT
 
 
 def folder_for(resource_type):
